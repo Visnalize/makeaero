@@ -1,6 +1,5 @@
 "use client";
 
-import { codeToHtml } from "shiki";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,8 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { codeToHtml } from "shiki";
 
 const huePresets = {
   blue: 245,
@@ -30,12 +31,13 @@ const huePresets = {
 };
 
 export default function App() {
+  const initialHue = "green";
   const [buttonText, setButtonText] = useState("Accept");
   const [buttonSize, setButtonSize] = useState("large");
-  const [selectedHue, setSelectedHue] = useState("green");
+  const [selectedHue, setSelectedHue] = useState(initialHue);
   const [customHue, setCustomHue] = useState([140]);
   const [glowIntensity, setGlowIntensity] = useState([0.7]);
-  const [saturation, setSaturation] = useState([0.1]);
+  const [saturation, setSaturation] = useState([0.2]);
   const [codeHtml, setCodeHtml] = useState("");
 
   const getCurrentHue = () => {
@@ -169,7 +171,7 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen p-8 flex flex-col"
+      className="min-h-screen px-6 py-10 flex flex-col"
       style={{
         background: `
           repeating-linear-gradient(
@@ -185,12 +187,12 @@ export default function App() {
     >
       <div className="max-w-6xl mx-auto w-full">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold text-black mb-3">
             Frutiger Aero Button Generator
           </h1>
-          <p className="text-slate-600">
+          <p className="text-slate-600 max-w-lg mx-auto mb-2">
             Create authentic Frutiger Aero-style buttons with customizable
-            colors, shapes, and effects using the OKLCH color system.
+            sizes, colors, and effects using the OKLCH color system.
           </p>
         </div>
 
@@ -213,38 +215,51 @@ export default function App() {
 
               <div>
                 <Label htmlFor="size">Size</Label>
-                <Select value={buttonSize} onValueChange={setButtonSize}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="small">Small</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="large">Large</SelectItem>
-                  </SelectContent>
-                </Select>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  value={buttonSize}
+                  onValueChange={setButtonSize}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem value="small">Small</ToggleGroupItem>
+                  <ToggleGroupItem value="medium">Medium</ToggleGroupItem>
+                  <ToggleGroupItem value="large">Large</ToggleGroupItem>
+                </ToggleGroup>
               </div>
 
               <div>
-                <Label htmlFor="hue">Color Hue</Label>
-                <Select value={selectedHue} onValueChange={setSelectedHue}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="blue">Blue (245°)</SelectItem>
-                    <SelectItem value="green">Green (140°)</SelectItem>
-                    <SelectItem value="red">Red (15°)</SelectItem>
-                    <SelectItem value="purple">Purple (280°)</SelectItem>
-                    <SelectItem value="orange">Orange (35°)</SelectItem>
-                    <SelectItem value="pink">Pink (320°)</SelectItem>
-                    <SelectItem value="teal">Teal (180°)</SelectItem>
-                    <SelectItem value="yellow">Yellow (65°)</SelectItem>
-                    <SelectItem value="magenta">Magenta (300°)</SelectItem>
-                    <SelectItem value="cyan">Cyan (200°)</SelectItem>
-                    <SelectItem value="custom">Custom</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="hue">Color</Label>
+                <div className="flex items-center gap-2">
+                  <Select value={selectedHue} onValueChange={setSelectedHue}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="blue">Blue</SelectItem>
+                      <SelectItem value="green">Green</SelectItem>
+                      <SelectItem value="red">Red</SelectItem>
+                      <SelectItem value="purple">Purple</SelectItem>
+                      <SelectItem value="orange">Orange</SelectItem>
+                      <SelectItem value="pink">Pink</SelectItem>
+                      <SelectItem value="teal">Teal</SelectItem>
+                      <SelectItem value="yellow">Yellow</SelectItem>
+                      <SelectItem value="magenta">Magenta</SelectItem>
+                      <SelectItem value="cyan">Cyan</SelectItem>
+                      <SelectItem value="custom">(Custom)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant={selectedHue === "custom" ? "secondary" : "link"}
+                    onClick={() =>
+                      setSelectedHue(
+                        selectedHue === "custom" ? initialHue : "custom"
+                      )
+                    }
+                  >
+                    Custom
+                  </Button>
+                </div>
               </div>
 
               {selectedHue === "custom" && (
@@ -272,9 +287,9 @@ export default function App() {
                 <Slider
                   value={saturation}
                   onValueChange={setSaturation}
-                  max={0.2}
-                  min={0.05}
-                  step={0.01}
+                  max={0.6}
+                  min={0.02}
+                  step={0.02}
                   className="mt-2"
                 />
               </div>
@@ -387,7 +402,7 @@ export default function App() {
         </div>
 
         {/* CSS Output */}
-        <Card className="mt-8 backdrop-blur-sm bg-white/90 border-white/30">
+        <Card className="my-8 backdrop-blur-sm bg-white/90 border-white/30">
           <CardHeader>
             <CardTitle>Generated CSS Code</CardTitle>
           </CardHeader>
@@ -416,6 +431,17 @@ export default function App() {
             )}
           </CardContent>
         </Card>
+
+        <p className="text-slate-600 text-center">
+          A fun little project by{" "}
+          <a
+            href="https://visnalize.com"
+            target="_blank"
+            className="text-blue-600"
+          >
+            Visnalize
+          </a>
+        </p>
       </div>
     </div>
   );

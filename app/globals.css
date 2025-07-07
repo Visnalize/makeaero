@@ -8,6 +8,8 @@ body {
 
 pre {
   padding: 1.5rem;
+  max-height: 800px;
+  overflow: auto;
 }
 
 @layer utilities {
