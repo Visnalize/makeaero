@@ -46,17 +46,6 @@ export default function App() {
       : huePresets[selectedHue as keyof typeof huePresets];
   };
 
-  const getSizeClasses = () => {
-    switch (buttonSize) {
-      case "small":
-        return "px-4 py-2 text-sm min-w-[80px]";
-      case "large":
-        return "px-8 py-4 text-lg min-w-[160px]";
-      default:
-        return "px-6 py-3 text-base min-w-[120px]";
-    }
-  };
-
   const generateCSS = () => {
     const hue = getCurrentHue();
     const sat = saturation[0];
@@ -66,13 +55,13 @@ export default function App() {
 .frutiger-aero-button {
   /* OKLCH Color System for accurate colors */
   --hue: ${hue};
-  --saturation: ${sat};
+  --sat: ${sat};
   --glow-intensity: ${glow};
   
   /* Color Variables */
-  --button-background: oklch(75% var(--saturation) var(--hue) / 0.8);
-  --bg-dark: oklch(45% var(--saturation) var(--hue) / 0.75);
-  --button-foreground: oklch(15% calc(var(--saturation) * 0.5) var(--hue));
+  --fg: oklch(15% calc(var(--sat) * 0.5) var(--hue));
+  --bg: oklch(75% var(--sat) var(--hue) / 0.8);
+  --bg-dark: oklch(45% var(--sat) var(--hue) / 0.75);
   --bottom-glow: radial-gradient(
     farthest-corner at bottom center,
     rgba(255, 255, 255, var(--glow-intensity)),
@@ -80,19 +69,19 @@ export default function App() {
   );
   
   /* Base Styling */
-  background-color: var(--button-background);
+  background-color: var(--bg);
   background: 
     var(--bottom-glow),
-    linear-gradient(to bottom, var(--bg-dark), var(--button-background));
+    linear-gradient(to bottom, var(--bg-dark), var(--bg));
   
-  border: 1px solid var(--button-background);
+  border: 1px solid var(--bg);
   border-radius: 9999px;
   
   /* Shadows and Effects */
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
   
   /* Typography */
-  color: var(--button-foreground);
+  color: var(--fg);
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif;
   font-weight: 700;
   text-shadow: 0 2px 0.5em rgba(0, 0, 0, 0.2);
@@ -101,7 +90,6 @@ export default function App() {
   cursor: pointer;
   position: relative;
   transition: all 300ms ease;
-  min-width: 160px;
   
   /* Prevent text selection */
   user-select: none;
@@ -141,32 +129,28 @@ export default function App() {
 
 /* Size Variations */
 .frutiger-aero-button.small {
-  padding: 0.5em 0.75em;
+  padding: 0.5em 1.5em;
   font-size: 0.875rem;
 }
 
 .frutiger-aero-button.medium {
-  padding: 0.75em 1em;
+  padding: 0.75em 2em;
   font-size: 1rem;
 }
 
 .frutiger-aero-button.large {
-  padding: 1em 1.5em;
+  padding: 1em 3em;
   font-size: 1.125rem;
 }`;
   };
 
-  const hue = getCurrentHue();
-  const sat = saturation[0];
   const glow = glowIntensity[0];
 
   useEffect(() => {
     codeToHtml(generateCSS(), {
       lang: "css",
       theme: "dracula",
-    }).then((html) => {
-      setCodeHtml(html);
-    });
+    }).then(setCodeHtml);
   }, [selectedHue, customHue, saturation, glowIntensity]);
 
   return (
@@ -329,72 +313,9 @@ export default function App() {
                   `,
                 }}
               >
-                <button
-                  className={`
-                    relative cursor-pointer transition-all duration-300 ease-out
-                    ${getSizeClasses()}
-                    rounded-full flex items-center justify-center gap-2
-                    font-bold select-none
-                    hover:transform hover:-translate-y-0.5
-                    active:transform active:translate-y-0.5
-                  `}
-                  style={
-                    {
-                      // OKLCH Color Variables
-                      "--hue": hue,
-                      "--saturation": sat,
-                      "--glow-intensity": glow,
-                      "--button-background": `oklch(75% ${sat} ${hue} / 0.8)`,
-                      "--bg-dark": `oklch(45% ${sat} ${hue} / 0.75)`,
-                      "--button-foreground": `oklch(15% ${sat * 0.5} ${hue})`,
-                      "--bottom-glow": `radial-gradient(farthest-corner at bottom center, rgba(255, 255, 255, ${glow}), transparent)`,
-
-                      // Applied Styles
-                      backgroundColor: `oklch(75% ${sat} ${hue} / 0.8)`,
-                      background: `
-                      radial-gradient(farthest-corner at bottom center, rgba(255, 255, 255, ${glow}), transparent),
-                      linear-gradient(to bottom, oklch(45% ${sat} ${hue} / 0.75), oklch(75% ${sat} ${hue} / 0.8))
-                    `,
-                      border: `1px solid oklch(75% ${sat} ${hue} / 0.8)`,
-                      boxShadow: "0 4px 4px rgba(0, 0, 0, 0.4)",
-                      color: `oklch(15% ${sat * 0.5} ${hue})`,
-                      fontFamily:
-                        '"Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif',
-                      textShadow: "0 2px 0.5em rgba(0, 0, 0, 0.2)",
-                    } as React.CSSProperties
-                  }
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 6px 8px rgba(0, 0, 0, 0.4)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 4px rgba(0, 0, 0, 0.4)";
-                  }}
-                  onMouseDown={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 4px rgba(0, 0, 0, 0.4)";
-                  }}
-                  onMouseUp={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 6px 8px rgba(0, 0, 0, 0.4)";
-                  }}
-                >
-                  {/* Top Highlight */}
-                  <div
-                    className="absolute pointer-events-none transition-all duration-400"
-                    style={{
-                      top: "4%",
-                      left: "0.75em",
-                      width: "calc(100% - 1.5em)",
-                      height: "40%",
-                      background:
-                        "linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1))",
-                      borderRadius: "inherit",
-                    }}
-                  />
-
-                  <span className="relative z-10">{buttonText}</span>
+                <style>{generateCSS()}</style>
+                <button className={`frutiger-aero-button ${buttonSize}`}>
+                  {buttonText}
                 </button>
               </div>
             </CardContent>
