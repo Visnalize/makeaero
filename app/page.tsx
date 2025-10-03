@@ -155,7 +155,7 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen px-6 py-10 flex flex-col"
+      className="flex flex-col px-6 py-10 min-h-screen"
       style={{
         background: `
           repeating-linear-gradient(
@@ -169,20 +169,28 @@ export default function App() {
         `,
       }}
     >
-      <div className="max-w-6xl mx-auto w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-black mb-3">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="mb-8 text-center">
+          <h1 className="mb-3 font-bold text-black text-4xl">
             Frutiger Aero Button Generator
           </h1>
-          <p className="text-slate-600 max-w-lg mx-auto mb-2">
-            Create authentic Frutiger Aero-style buttons with customizable
+          <p className="mx-auto mb-2 max-w-xl text-slate-600">
+            A simple tool by{" "}
+            <a
+              href="https://visnalize.com"
+              target="_blank"
+              className="text-blue-600"
+            >
+              Visnalize
+            </a>{" "}
+            to create authentic Frutiger Aero-style buttons with customizable
             sizes, colors, and effects using the OKLCH color system.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="gap-8 grid lg:grid-cols-2">
           {/* Controls */}
-          <Card className="backdrop-blur-sm bg-white/90 border-white/30">
+          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
             <CardHeader>
               <CardTitle>Button Customization</CardTitle>
             </CardHeader>
@@ -258,7 +266,7 @@ export default function App() {
                     className="mt-2"
                   />
                   <div
-                    className="h-8 rounded-lg mt-2 border border-gray-300"
+                    className="mt-2 border border-gray-300 rounded-lg h-8"
                     style={{
                       background: `linear-gradient(to right in oklch longer hue, oklch(75% 0.1 0), oklch(75% 0.1 360))`,
                     }}
@@ -293,13 +301,13 @@ export default function App() {
           </Card>
 
           {/* Preview */}
-          <Card className="backdrop-blur-sm bg-white/90 border-white/30">
+          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
             <CardHeader>
               <CardTitle>Live Preview</CardTitle>
             </CardHeader>
             <CardContent>
               <div
-                className="rounded-xl p-16 flex items-center justify-center min-h-[400px] relative"
+                className="relative flex justify-center items-center p-16 rounded-xl min-h-[400px]"
                 style={{
                   background: `
                     repeating-linear-gradient(
@@ -323,7 +331,7 @@ export default function App() {
         </div>
 
         {/* CSS Output */}
-        <Card className="my-8 backdrop-blur-sm bg-white/90 border-white/30">
+        <Card className="bg-white/90 backdrop-blur-sm my-8 border-white/30">
           <CardHeader>
             <CardTitle>Generated CSS Code</CardTitle>
           </CardHeader>
@@ -353,15 +361,25 @@ export default function App() {
           </CardContent>
         </Card>
 
-        <p className="text-slate-600 text-center">
-          A fun little project by{" "}
-          <a
-            href="https://visnalize.com"
-            target="_blank"
-            className="text-blue-600"
-          >
-            Visnalize
-          </a>
+        <p className="flex flex-col items-center text-slate-600 text-center">
+          <div>Retro fan? Check out our other projects</div>
+          <div>
+            <a
+              href="https://visnalize.com/win7simu"
+              target="_blank"
+              className="text-blue-600"
+            >
+              Win7 Simu
+            </a>{" "}
+            -{" "}
+            <a
+              href="https://visnalize.com/brick1100"
+              target="_blank"
+              className="text-blue-600"
+            >
+              Brick 1100
+            </a>
+          </div>
         </p>
       </div>
     </div>
