@@ -94,7 +94,7 @@ export default function HomePage() {
             Make Aero
           </h1>
           <p className="mx-auto max-w-xl text-slate-600 text-lg">
-            Your go-to tools for creating authentic Frutiger Aero styles —
+            Your go-to tools for creating authentic Frutiger Aero styles -
             glossy buttons, shiny orbs, and glass window frames, all
             customizable and filled with nostalgia.
           </p>
