@@ -1,387 +1,137 @@
-"use client";
+import { AeroBackground } from "@/components/aero-background";
+import Link from "next/link";
+import { MousePointerClick, Circle, AppWindow } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import type React from "react";
-import { useEffect, useState } from "react";
-import { codeToHtml } from "shiki";
+const features = [
+  {
+    href: "/button",
+    icon: MousePointerClick,
+    title: "Button Generator",
+    description:
+      "Create authentic Frutiger Aero-style buttons with customizable sizes, colors, and glossy effects.",
+    preview: (
+      <div
+        className="relative rounded-full w-28 h-10 overflow-hidden"
+        style={{
+          background: "linear-gradient(to bottom, oklch(45% 0.2 140 / 0.75), oklch(75% 0.2 140 / 0.8))",
+          boxShadow: "0 4px 4px rgba(0,0,0,0.3)",
+        }}
+      >
+        <div
+          className="top-[4%] right-3 left-3 absolute rounded-full h-[40%]"
+          style={{
+            background: "linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.1))",
+          }}
+        />
+        <span className="absolute inset-0 flex justify-center items-center font-bold text-green-950 text-xs">
+          Accept
+        </span>
+      </div>
+    ),
+  },
+  {
+    href: "/orb",
+    icon: Circle,
+    title: "Glossy Orb Generator",
+    description:
+      "Generate glossy orb effects — as CSS code or as an image with your own logo embedded inside.",
+    preview: (
+      <div
+        className="relative rounded-full w-16 h-16"
+        style={{
+          background: "radial-gradient(circle at 35% 35%, rgba(255,255,255,0.6), oklch(65% 0.15 245) 50%, oklch(35% 0.15 245) 100%)",
+          boxShadow: "inset 0 -4px 8px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.3)",
+        }}
+      >
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: "8%",
+            left: "18%",
+            width: "45%",
+            height: "35%",
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.7), transparent)",
+            transform: "rotate(-20deg)",
+          }}
+        />
+      </div>
+    ),
+  },
+  {
+    href: "/window-glass",
+    icon: AppWindow,
+    title: "Window Glass Generator",
+    description:
+      "Generate Windows 7 Aero-style glass window frames with customizable content and glass effects.",
+    preview: (
+      <div className="rounded-md w-32 overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+        <div
+          className="flex items-center gap-1 px-1.5 h-5"
+          style={{
+            background: "linear-gradient(to bottom, rgba(80,130,200,0.7), rgba(30,60,120,0.8))",
+          }}
+        >
+          <span className="flex-1 text-[6px] text-white/90 truncate">Untitled</span>
+          <div className="flex gap-0.5">
+            <div className="bg-white/20 rounded-sm w-2.5 h-2" />
+            <div className="bg-white/20 rounded-sm w-2.5 h-2" />
+            <div className="bg-red-400/60 rounded-sm w-2.5 h-2" />
+          </div>
+        </div>
+        <div className="bg-white h-10" />
+      </div>
+    ),
+  },
+];
 
-const huePresets = {
-  blue: 245,
-  green: 140,
-  red: 15,
-  purple: 280,
-  orange: 35,
-  pink: 320,
-  teal: 180,
-  yellow: 65,
-  magenta: 300,
-  cyan: 200,
-};
-
-export default function App() {
-  const initialHue = "green";
-  const [buttonText, setButtonText] = useState("Accept");
-  const [buttonSize, setButtonSize] = useState("large");
-  const [selectedHue, setSelectedHue] = useState(initialHue);
-  const [customHue, setCustomHue] = useState([140]);
-  const [glowIntensity, setGlowIntensity] = useState([0.7]);
-  const [saturation, setSaturation] = useState([0.2]);
-  const [codeHtml, setCodeHtml] = useState("");
-
-  const getCurrentHue = () => {
-    return selectedHue === "custom"
-      ? customHue[0]
-      : huePresets[selectedHue as keyof typeof huePresets];
-  };
-
-  const generateCSS = () => {
-    const hue = getCurrentHue();
-    const sat = saturation[0];
-    const glow = glowIntensity[0];
-
-    return `/* Authentic Frutiger Aero Button CSS */
-.frutiger-aero-button {
-  /* OKLCH Color System for accurate colors */
-  --hue: ${hue};
-  --sat: ${sat};
-  --glow-intensity: ${glow};
-  
-  /* Color Variables */
-  --fg: oklch(15% calc(var(--sat) * 0.5) var(--hue));
-  --bg: oklch(75% var(--sat) var(--hue) / 0.8);
-  --bg-dark: oklch(45% var(--sat) var(--hue) / 0.75);
-  --bottom-glow: radial-gradient(
-    farthest-corner at bottom center,
-    rgba(255, 255, 255, var(--glow-intensity)),
-    transparent
-  );
-  
-  /* Base Styling */
-  background-color: var(--bg);
-  background: 
-    var(--bottom-glow),
-    linear-gradient(to bottom, var(--bg-dark), var(--bg));
-  
-  border: 1px solid var(--bg);
-  border-radius: 9999px;
-  
-  /* Shadows and Effects */
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
-  
-  /* Typography */
-  color: var(--fg);
-  font-family: "Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif;
-  font-weight: 700;
-  text-shadow: 0 2px 0.5em rgba(0, 0, 0, 0.2);
-  
-  /* Layout */
-  cursor: pointer;
-  position: relative;
-  transition: all 300ms ease;
-  
-  /* Prevent text selection */
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* Top Highlight Effect */
-.frutiger-aero-button::after {
-  content: "";
-  position: absolute;
-  top: 4%;
-  left: 0.75em;
-  width: calc(100% - 1.5em);
-  height: 40%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.8),
-    rgba(255, 255, 255, 0.1)
-  );
-  border-radius: inherit;
-  transition: background 400ms ease;
-  pointer-events: none;
-}
-
-/* Hover State */
-.frutiger-aero-button:hover,
-.frutiger-aero-button:focus {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
-  transform: translateY(-1px);
-}
-
-/* Active State */
-.frutiger-aero-button:active {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  transform: translateY(1px);
-}
-
-/* Size Variations */
-.frutiger-aero-button.small {
-  padding: 0.5em 1.5em;
-  font-size: 0.875rem;
-}
-
-.frutiger-aero-button.medium {
-  padding: 0.75em 2em;
-  font-size: 1rem;
-}
-
-.frutiger-aero-button.large {
-  padding: 1em 3em;
-  font-size: 1.125rem;
-}`;
-  };
-
-  const glow = glowIntensity[0];
-
-  useEffect(() => {
-    codeToHtml(generateCSS(), {
-      lang: "css",
-      theme: "dracula",
-    }).then(setCodeHtml);
-  }, [selectedHue, customHue, saturation, glowIntensity]);
-
+export default function HomePage() {
   return (
-    <div
-      className="flex flex-col px-6 py-10 min-h-screen"
-      style={{
-        background: `
-          repeating-linear-gradient(
-            45deg,
-            rgba(255, 255, 255, 0.03),
-            rgba(255, 255, 255, 0.03) 1px,
-            transparent 1px,
-            transparent 20px
-          ),
-          linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%)
-        `,
-      }}
-    >
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="mb-8 text-center">
-          <h1 className="mb-3 font-bold text-black text-4xl">
-            Frutiger Aero Button Generator
+    <AeroBackground variant="page" className="flex flex-col px-6 py-16 min-h-[calc(100vh-3.5rem)]">
+      <div className="mx-auto w-full max-w-4xl">
+        {/* Hero */}
+        <div className="mb-16 text-center">
+          <h1 className="mb-4 font-bold text-slate-800 text-5xl">
+            Make Aero
           </h1>
-          <p className="mx-auto mb-2 max-w-xl text-slate-600">
-            A simple tool by{" "}
-            <a
-              href="https://visnalize.com"
-              target="_blank"
-              className="text-blue-600"
-            >
+          <p className="mx-auto max-w-xl text-slate-600 text-lg">
+            Your go-to tools for creating authentic Frutiger Aero styles —
+            glossy buttons, shiny orbs, and glass window frames, all
+            customizable and filled with nostalgia.
+          </p>
+          <p className="mt-2 text-slate-500 text-sm">
+            A project by{" "}
+            <a href="https://visnalize.com" target="_blank" className="text-blue-600 hover:underline">
               Visnalize
-            </a>{" "}
-            to create authentic Frutiger Aero-style buttons with customizable
-            sizes, colors, and effects using the OKLCH color system.
+            </a>
           </p>
         </div>
 
-        <div className="gap-8 grid lg:grid-cols-2">
-          {/* Controls */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
-            <CardHeader>
-              <CardTitle>Button Customization</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="text">Button Text</Label>
-                <Input
-                  id="text"
-                  value={buttonText}
-                  onChange={(e) => setButtonText(e.target.value)}
-                  placeholder="Enter button text"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="size">Size</Label>
-                <ToggleGroup
-                  type="single"
-                  variant="outline"
-                  value={buttonSize}
-                  onValueChange={setButtonSize}
-                  className="justify-start"
-                >
-                  <ToggleGroupItem value="small">Small</ToggleGroupItem>
-                  <ToggleGroupItem value="medium">Medium</ToggleGroupItem>
-                  <ToggleGroupItem value="large">Large</ToggleGroupItem>
-                </ToggleGroup>
-              </div>
-
-              <div>
-                <Label htmlFor="hue">Color</Label>
-                <div className="flex items-center gap-2">
-                  <Select value={selectedHue} onValueChange={setSelectedHue}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="blue">Blue</SelectItem>
-                      <SelectItem value="green">Green</SelectItem>
-                      <SelectItem value="red">Red</SelectItem>
-                      <SelectItem value="purple">Purple</SelectItem>
-                      <SelectItem value="orange">Orange</SelectItem>
-                      <SelectItem value="pink">Pink</SelectItem>
-                      <SelectItem value="teal">Teal</SelectItem>
-                      <SelectItem value="yellow">Yellow</SelectItem>
-                      <SelectItem value="magenta">Magenta</SelectItem>
-                      <SelectItem value="cyan">Cyan</SelectItem>
-                      <SelectItem value="custom">(Custom)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant={selectedHue === "custom" ? "secondary" : "link"}
-                    onClick={() =>
-                      setSelectedHue(
-                        selectedHue === "custom" ? initialHue : "custom"
-                      )
-                    }
-                  >
-                    Custom
-                  </Button>
+        {/* Feature cards */}
+        <div className="gap-6 grid md:grid-cols-3">
+          {features.map((feature) => (
+            <Link
+              key={feature.href}
+              href={feature.href}
+              className="group block"
+            >
+              <div className="bg-white/80 hover:bg-white/95 hover:shadow-blue-100/50 hover:shadow-lg backdrop-blur-sm p-6 border border-white/40 rounded-2xl h-full transition-all hover:-translate-y-1 duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-blue-50 p-2 rounded-xl text-blue-600">
+                    <feature.icon className="w-5 h-5" />
+                  </div>
+                  <h2 className="font-semibold text-slate-800">{feature.title}</h2>
                 </div>
-              </div>
-
-              {selectedHue === "custom" && (
-                <div>
-                  <Label>Custom Hue: {customHue[0]}°</Label>
-                  <Slider
-                    value={customHue}
-                    onValueChange={setCustomHue}
-                    max={360}
-                    min={0}
-                    step={1}
-                    className="mt-2"
-                  />
-                  <div
-                    className="mt-2 border border-gray-300 rounded-lg h-8"
-                    style={{
-                      background: `linear-gradient(to right in oklch longer hue, oklch(75% 0.1 0), oklch(75% 0.1 360))`,
-                    }}
-                  />
+                <div className="flex justify-center items-center py-6">
+                  {feature.preview}
                 </div>
-              )}
-
-              <div>
-                <Label>Color Saturation: {saturation[0].toFixed(2)}</Label>
-                <Slider
-                  value={saturation}
-                  onValueChange={setSaturation}
-                  max={0.6}
-                  min={0.02}
-                  step={0.02}
-                  className="mt-2"
-                />
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-
-              <div>
-                <Label>Bottom Glow Intensity: {glow.toFixed(2)}</Label>
-                <Slider
-                  value={glowIntensity}
-                  onValueChange={setGlowIntensity}
-                  max={1.0}
-                  min={0.3}
-                  step={0.05}
-                  className="mt-2"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preview */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
-            <CardHeader>
-              <CardTitle>Live Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className="relative flex justify-center items-center p-16 rounded-xl min-h-[400px]"
-                style={{
-                  background: `
-                    repeating-linear-gradient(
-                      45deg,
-                      rgba(255, 255, 255, 0.1),
-                      rgba(255, 255, 255, 0.1) 1px,
-                      transparent 1px,
-                      transparent 15px
-                    ),
-                    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)
-                  `,
-                }}
-              >
-                <style>{generateCSS()}</style>
-                <button className={`frutiger-aero-button ${buttonSize}`}>
-                  {buttonText}
-                </button>
-              </div>
-            </CardContent>
-          </Card>
+            </Link>
+          ))}
         </div>
-
-        {/* CSS Output */}
-        <Card className="bg-white/90 backdrop-blur-sm my-8 border-white/30">
-          <CardHeader>
-            <CardTitle>Generated CSS Code</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 mb-4">
-              <Button
-                onClick={() => navigator.clipboard.writeText(generateCSS())}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                Copy CSS
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const htmlCode = `<button class="frutiger-aero-button ${buttonSize}">${buttonText}</button>`;
-                  navigator.clipboard.writeText(htmlCode);
-                }}
-              >
-                Copy HTML
-              </Button>
-            </div>
-            {codeHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: codeHtml }}></div>
-            ) : (
-              <pre className="bg-[#282A36] text-[#F8F8F2]">{generateCSS()}</pre>
-            )}
-          </CardContent>
-        </Card>
-
-        <p className="flex flex-col items-center text-slate-600 text-center">
-          <div>Retro fan? Check out our other projects</div>
-          <div>
-            <a
-              href="https://visnalize.com/win7simu"
-              target="_blank"
-              className="text-blue-600"
-            >
-              Win7 Simu
-            </a>{" "}
-            -{" "}
-            <a
-              href="https://visnalize.com/brick1100"
-              target="_blank"
-              className="text-blue-600"
-            >
-              Brick 1100
-            </a>
-          </div>
-        </p>
       </div>
-    </div>
+    </AeroBackground>
   );
 }
