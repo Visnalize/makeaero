@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_NAME, SITE_URL, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, defaultOpenGraph, defaultTwitter, websiteJsonLd } from "@/lib/seo";
 import { AeroBackground } from "@/components/aero-background";
 import Link from "next/link";
 import { MousePointerClick, Circle, AppWindow } from "lucide-react";
@@ -122,6 +122,10 @@ const features = [
 export default function HomePage() {
   return (
     <AeroBackground variant="page" className="flex flex-col px-6 py-16 min-h-[calc(100vh-3.5rem)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+      />
       <div className="mx-auto w-full max-w-4xl">
         {/* Hero */}
         <div className="mb-16 text-center">

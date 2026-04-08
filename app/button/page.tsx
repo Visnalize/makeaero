@@ -1,6 +1,13 @@
 import { Metadata } from "next";
-import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
+import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter, webAppJsonLd } from "@/lib/seo";
 import ButtonClient from "./button-client";
+
+const BUTTON_JSONLD = webAppJsonLd({
+  name: "Frutiger Aero Button Generator",
+  description:
+    "Free CSS generator for authentic Frutiger Aero glossy buttons. Customize color, size, glow intensity, and saturation with a live preview.",
+  url: `${SITE_URL}/button`,
+});
 
 export const metadata: Metadata = {
   title: "Frutiger Aero Button Generator",
@@ -35,5 +42,13 @@ export const metadata: Metadata = {
 };
 
 export default function ButtonGeneratorPage() {
-  return <ButtonClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BUTTON_JSONLD) }}
+      />
+      <ButtonClient />
+    </>
+  );
 }

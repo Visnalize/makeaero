@@ -1,6 +1,13 @@
 import { Metadata } from "next";
-import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
+import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter, webAppJsonLd } from "@/lib/seo";
 import OrbClient from "./orb-client";
+
+const ORB_JSONLD = webAppJsonLd({
+  name: "Glossy Orb Generator",
+  description:
+    "Create Frutiger Aero-style glossy orbs as CSS code or downloadable PNG images. Embed your own logo inside a Windows 7 glass sphere.",
+  url: `${SITE_URL}/orb`,
+});
 
 export const metadata: Metadata = {
   title: "Glossy Orb Generator",
@@ -35,6 +42,14 @@ export const metadata: Metadata = {
 };
 
 export default function OrbGeneratorPage() {
-  return <OrbClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ORB_JSONLD) }}
+      />
+      <OrbClient />
+    </>
+  );
 }
 

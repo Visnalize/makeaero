@@ -1,0 +1,23 @@
+# Make Aero
+
+> Free online tools for creating authentic Frutiger Aero (Windows 7 Aero) styles — glossy buttons, shiny orbs, and glass window frames. All tools generate ready-to-use CSS and HTML with a live preview.
+
+Make Aero is a collection of free, browser-based CSS generators inspired by the Frutiger Aero design aesthetic — the glossy, translucent, nature-infused visual style popularised by Windows Vista and Windows 7 (roughly 2004–2013). No login required. No installation. Copy generated CSS directly into your project.
+
+## Tools
+
+- [Frutiger Aero Button Generator](https://makeaero.com/button): Generate glossy pill-shaped buttons using the OKLCH color system. Customise color hue, saturation, size, and bottom glow intensity. Outputs plain CSS with hover and active states.
+
+- [Glossy Orb Generator](https://makeaero.com/orb): Create glossy sphere / orb effects either as pure CSS or as a downloadable PNG image with your own logo embedded inside. Customise size, color, and gloss intensity.
+
+- [Windows 7 Aero Glass Window Generator](https://makeaero.com/window-glass): Generate authentic Windows 7 Aero glass window frames with a translucent title bar, minimize/maximize/close controls, optional menu bar, and a flat content area. Outputs CSS and HTML.
+
+## About
+
+Made by [Visnalize](https://visnalize.com). The project is a tribute to the Frutiger Aero era of UI design.
+
+## Key concepts
+
+- **Frutiger Aero**: A design aesthetic combining Frutiger typeface sensibilities with Windows Aero glass effects — characterised by glossy surfaces, translucency, gradients, and nature imagery.
+- **Windows 7 Aero**: Microsoft's glass-effect window chrome introduced in Vista and refined in Windows 7, featuring translucent title bars with backdrop blur and coloured glass tinting.
+- **OKLCH**: A perceptually uniform CSS color space used by the button generator for accurate, vibrant color control.
