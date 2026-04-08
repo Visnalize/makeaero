@@ -2,13 +2,14 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://makeaero.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Make Aero - Frutiger Aero Style Generator",
-    template: "%s | Make Aero",
+    default: `${SITE_NAME} - Frutiger Aero Style Generator`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Your go-to tool for creating authentic Frutiger Aero styles with ease, fully customizable and filled with nostalgia.",
