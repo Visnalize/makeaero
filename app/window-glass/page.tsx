@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { SITE_URL, ogTitle } from "@/lib/seo";
+import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
 import WindowGlassClient from "./window-glass-client";
 
 export const metadata: Metadata = {
@@ -17,11 +17,17 @@ export const metadata: Metadata = {
     "Windows 7 UI CSS",
   ],
   openGraph: {
+    ...defaultOpenGraph,
     title: ogTitle("Aero Glass Window Generator"),
     description:
       "Generate authentic Aero glass window CSS with customizable title bars, glass opacity, and chrome effects.",
     url: `${SITE_URL}/window-glass`,
-    type: "website",
+  },
+  twitter: {
+    ...defaultTwitter,
+    title: ogTitle("Aero Glass Window Generator"),
+    description:
+      "Generate authentic Aero glass window CSS with customizable title bars, glass opacity, and chrome effects.",
   },
   alternates: {
     canonical: `${SITE_URL}/window-glass`,

@@ -13,6 +13,17 @@ export const metadata: Metadata = {
   },
   description:
     "Your go-to tool for creating authentic Frutiger Aero styles with ease, fully customizable and filled with nostalgia.",
+  openGraph: {
+    siteName: SITE_NAME,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

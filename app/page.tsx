@@ -1,6 +1,41 @@
+import type { Metadata } from "next";
+import { SITE_NAME, SITE_URL, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
 import { AeroBackground } from "@/components/aero-background";
 import Link from "next/link";
 import { MousePointerClick, Circle, AppWindow } from "lucide-react";
+
+const HOME_TITLE = `${SITE_NAME} - Frutiger Aero Style Generator`;
+const HOME_DESCRIPTION =
+  "Your go-to tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, and glass window frames, all customizable and filled with nostalgia.";
+
+export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
+  keywords: [
+    "frutiger aero",
+    "aero style generator",
+    "frutiger aero CSS",
+    "Windows 7 aero",
+    "glossy UI CSS",
+    "aero glass effect",
+    "glass morphism",
+    "aero design tools",
+  ],
+  openGraph: {
+    ...defaultOpenGraph,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: SITE_URL,
+  },
+  twitter: {
+    ...defaultTwitter,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
 
 const features = [
   {

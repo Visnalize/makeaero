@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { SITE_URL, ogTitle } from "@/lib/seo";
+import { SITE_URL, ogTitle, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
 import ButtonClient from "./button-client";
 
 export const metadata: Metadata = {
@@ -17,11 +17,17 @@ export const metadata: Metadata = {
     "OKLCH button CSS",
   ],
   openGraph: {
+    ...defaultOpenGraph,
     title: ogTitle("Frutiger Aero Button Generator"),
     description:
       "Generate authentic Frutiger Aero-style glossy buttons with CSS. Customize colors, sizes, and glow effects with live preview.",
     url: `${SITE_URL}/button`,
-    type: "website",
+  },
+  twitter: {
+    ...defaultTwitter,
+    title: ogTitle("Frutiger Aero Button Generator"),
+    description:
+      "Generate authentic Frutiger Aero-style glossy buttons with CSS. Customize colors, sizes, and glow effects with live preview.",
   },
   alternates: {
     canonical: `${SITE_URL}/button`,
