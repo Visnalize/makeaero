@@ -3,6 +3,8 @@ import { SITE_URL } from "@/lib/seo";
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-static";
+
 const PAGE_FILES = new Set(["page.tsx", "page.ts", "page.jsx", "page.js"]);
 
 // Directories that never map to a user-facing route
