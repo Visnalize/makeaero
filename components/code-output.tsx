@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCodeHighlight } from "@/hooks/use-code-highlight";
@@ -20,6 +21,13 @@ export function CodeOutput({
   copyButtons: CopyButton[];
 }) {
   const codeHtml = useCodeHighlight(code, language);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const handleCopy = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
 
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-white/30">
@@ -32,10 +40,12 @@ export function CodeOutput({
             <Button
               key={btn.label}
               variant={btn.variant ?? (i === 0 ? "default" : "outline")}
-              className={i === 0 ? "bg-blue-600 hover:bg-blue-700" : ""}
-              onClick={() => navigator.clipboard.writeText(btn.text)}
+              className={
+                (i === 0 ? "bg-blue-600 hover:bg-blue-700" : "") + " w-28"
+              }
+              onClick={() => handleCopy(btn.text, i)}
             >
-              {btn.label}
+              {copiedIndex === i ? "Copied!" : btn.label}
             </Button>
           ))}
         </div>

@@ -166,14 +166,15 @@ export default function WindowGlassGeneratorPage() {
 .aero-title-bar-controls button {
   position: relative;
   min-width: 29px;
-  min-height: 19px;
+  min-height: 21px;
   padding: 0;
   border: 0;
   border-right: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 0;
   box-sizing: border-box;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 13px;
+  line-height: 1;
   color: rgba(0, 0, 0, 0.65);
   text-shadow: 0 0 3px rgba(255, 255, 255, 0.9), 0 1px 0 rgba(255, 255, 255, 0.8);
   background: linear-gradient(
@@ -215,6 +216,8 @@ export default function WindowGlassGeneratorPage() {
 
 /* Close button */
 .aero-title-bar-controls button.close {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   background:
     radial-gradient(circle at -60% 50%, rgba(0, 0, 0, 0.44) 5% 10%, transparent 50%),
     radial-gradient(circle at 160% 50%, rgba(0, 0, 0, 0.44) 5% 10%, transparent 50%),
@@ -237,28 +240,25 @@ export default function WindowGlassGeneratorPage() {
 
 /* Menu bar */
 .aero-window-menubar {
-  background: #f0f0f0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(#fff 20%, #f1f4fa 25%, #f1f4fa 43%, #d4dbee 48%, #e6eaf6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   display: flex;
-  align-items: center;
-  padding: 0 4px;
-  height: 20px;
+  align-items: stretch;
   font-size: 9pt;
   color: #000;
   font-family: "Segoe UI", "SegoeUI", "Noto Sans", sans-serif;
 }
 
 .aero-window-menubar span {
-  display: inline-block;
-  padding: 1px 6px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
   cursor: default;
-  border: 1px solid transparent;
-  border-radius: 2px;
 }
 
 .aero-window-menubar span:hover {
-  background: linear-gradient(#eaf6fd 45%, #bee6fd 45%, #a7d9f5);
-  border-color: #3c7fb1;
+  background: #3399ff;
+  color: #fff;
 }` : ""}
 
 /* Window body — solid #f0f0f0 surface, inset 6px from glass border */
@@ -475,7 +475,7 @@ export default function WindowGlassGeneratorPage() {
                   )}
                   <div
                     className="aero-window-body"
-                    style={{ minHeight: windowHeight[0] - (showMenuBar ? 46 : 26) }}
+                    style={{ minHeight: windowHeight[0] - (showMenuBar ? 50 : 27) }}
                   />
                 </div>
               </AeroBackground>
