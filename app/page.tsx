@@ -100,7 +100,7 @@ export default function HomePage() {
           </p>
           <p className="mt-2 text-slate-500 text-sm">
             A project by{" "}
-            <a href="https://visnalize.com" target="_blank" className="text-blue-600 hover:underline">
+            <a href="https://visnalize.com" target="_blank" className="text-brand-dark hover:underline">
               Visnalize
             </a>
           </p>
@@ -114,9 +114,9 @@ export default function HomePage() {
               href={feature.href}
               className="group block"
             >
-              <div className="bg-white/80 hover:bg-white/95 hover:shadow-blue-100/50 hover:shadow-lg backdrop-blur-sm p-6 border border-white/40 rounded-2xl h-full transition-all hover:-translate-y-1 duration-300">
+              <div className="bg-white/80 hover:bg-white/95 hover:shadow-brand-light/50 hover:shadow-lg backdrop-blur-sm p-6 border border-white/40 rounded-2xl h-full transition-all hover:-translate-y-1 duration-300">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-blue-50 p-2 rounded-xl text-blue-600">
+                  <div className="bg-brand-light p-2 rounded-xl text-brand-dark">
                     <feature.icon className="w-5 h-5" />
                   </div>
                   <h2 className="font-semibold text-slate-800">{feature.title}</h2>

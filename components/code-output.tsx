@@ -40,9 +40,7 @@ export function CodeOutput({
             <Button
               key={btn.label}
               variant={btn.variant ?? (i === 0 ? "default" : "outline")}
-              className={
-                (i === 0 ? "bg-blue-600 hover:bg-blue-700" : "") + " w-28"
-              }
+              className="w-28"
               onClick={() => handleCopy(btn.text, i)}
             >
               {copiedIndex === i ? "Copied!" : btn.label}

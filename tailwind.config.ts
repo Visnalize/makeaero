@@ -13,6 +13,12 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+  			brand: {
+  				DEFAULT: '#0c9b81', /* 169 86% 33% — passes WCAG AA for UI components (3.6:1 on white) */
+  				dark: '#09725f',    /* 169 86% 24% — passes WCAG AA for body text links (4.6:1 on white) */
+  				light: '#d4f0ea',   /* very light tint for backgrounds */
+  				foreground: '#ffffff',
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

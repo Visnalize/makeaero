@@ -459,7 +459,7 @@ export default function OrbGeneratorPage() {
                     <canvas ref={canvasRef} />
                     <Button
                       onClick={handleDownload}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-brand hover:bg-brand-dark"
                     >
                       <Download className="mr-2 w-4 h-4" />
                       Download PNG
