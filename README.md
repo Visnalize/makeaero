@@ -1,6 +1,6 @@
 # Make Aero
 
-Your go-to tools for creating authentic **Frutiger Aero** styles - glossy buttons, shiny orbs, glass window frames, and dreamy wallpapers, all customizable and filled with nostalgia.
+Your go-to tools for creating authentic **Frutiger Aero** styles - glossy buttons, shiny orbs, glass window frames, dreamy wallpapers, and profile pictures, all customizable and filled with nostalgia.
 
 **[makeaero.com](https://makeaero.com)**
 
@@ -47,6 +47,17 @@ Generate the iconic Frutiger Aero wallpaper across a range of scenes — glowing
 - Layered scene elements: iridescent bubbles, bokeh/stars, drifting clouds, light rays, grass horizon, vignette, and optional film grain
 - Adjustable element density with a shuffleable random layout
 - Download as a high-res PNG, or copy an approximate CSS background
+
+### Aero PFP Generator
+
+Make a glossy Frutiger Aero profile picture (avatar) and download it as a transparent PNG.
+
+- Content: upload a photo/logo, or use **initials** (with color) or an **emoji**
+- Aero scene backgrounds: Sky, Meadow, Underwater, Sunset, Aurora Night, or a solid glossy color, with a custom hue picker
+- Circle or rounded-square (squircle) shape
+- Glossy Web 2.0 sheen with adjustable intensity
+- Rim styles: none, glossy ring, or iridescent bubble
+- Export at 256, 512, or 1024 px, with a shuffleable background layout
 
 ## Tech Stack
 

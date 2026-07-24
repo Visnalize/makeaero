@@ -1,6 +1,6 @@
 # Make Aero
 
-> Free online tools for creating authentic Frutiger Aero (Windows 7 Aero) styles — glossy buttons, shiny orbs, glass window frames, and dreamy wallpapers. All tools generate ready-to-use CSS and HTML with a live preview.
+> Free online tools for creating authentic Frutiger Aero (Windows 7 Aero) styles — glossy buttons, shiny orbs, glass window frames, dreamy wallpapers, and profile pictures. All tools generate ready-to-use CSS/HTML or downloadable images with a live preview.
 
 Make Aero is a collection of free, browser-based CSS generators inspired by the Frutiger Aero design aesthetic — the glossy, translucent, nature-infused visual style popularised by Windows Vista and Windows 7 (roughly 2004–2013). No login required. No installation. Copy generated CSS directly into your project.
 
@@ -13,6 +13,8 @@ Make Aero is a collection of free, browser-based CSS generators inspired by the 
 - [Windows 7 Aero Glass Window Generator](https://makeaero.com/window-glass): Generate authentic Windows 7 Aero glass window frames with a translucent title bar, minimize/maximize/close controls, optional menu bar, and a flat content area. Outputs CSS and HTML.
 
 - [Aero Wallpaper Generator](https://makeaero.com/wallpaper): Generate the iconic Frutiger Aero wallpaper across multiple scenes — day sky, underwater with descending god-rays, and aurora night — with glowing gradients, iridescent bubbles, drifting clouds, bokeh/stars, light rays, vignette, and film grain. Download as a high-res PNG or copy an approximate CSS background.
+
+- [Aero PFP Generator](https://makeaero.com/pfp): Create a glossy Frutiger Aero profile picture / avatar. Place your photo, initials, or an emoji on an Aero scene background (sky, meadow, underwater, sunset, aurora, or a solid glossy color), in a circle or rounded-square shape, finished with a glossy sheen and an optional iridescent bubble rim. Download a transparent PNG at 256, 512, or 1024 px.
 
 ## About
 

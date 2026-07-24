@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Your go-to tools for creating authentic Frutiger Aero styles — buttons, orbs, glass windows, and wallpapers — fully customizable and filled with nostalgia.",
+    "Your go-to tools for creating authentic Frutiger Aero styles — buttons, orbs, glass windows, wallpapers, and profile pictures — fully customizable and filled with nostalgia.",
   openGraph: {
     siteName: SITE_NAME,
     type: "website",

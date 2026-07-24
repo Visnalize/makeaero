@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, defaultOpenGraph, defaultTwitter, websiteJsonLd } from "@/lib/seo";
 import { AeroBackground } from "@/components/aero-background";
 import Link from "next/link";
-import { MousePointerClick, Circle, AppWindow, Image as ImageIcon } from "lucide-react";
+import { MousePointerClick, Circle, AppWindow, Image as ImageIcon, CircleUser } from "lucide-react";
 
 const HOME_TITLE = `${SITE_NAME} - Frutiger Aero Style Generator`;
 const HOME_DESCRIPTION =
-  "Your go-to tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, glass window frames, and dreamy wallpapers, all customizable and filled with nostalgia.";
+  "Your go-to tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, glass window frames, dreamy wallpapers, and profile pictures, all customizable and filled with nostalgia.";
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
@@ -21,6 +21,8 @@ export const metadata: Metadata = {
     "glass morphism",
     "aero design tools",
     "frutiger aero wallpaper generator",
+    "frutiger aero pfp generator",
+    "aero profile picture",
     "soap bubble CSS",
   ],
   openGraph: {
@@ -151,6 +153,42 @@ const features = [
         <div
           className="absolute rounded-full w-2 h-2"
           style={{ top: "35%", left: "70%", background: "rgba(255,255,255,0.4)" }}
+        />
+      </div>
+    ),
+  },
+  {
+    href: "/pfp",
+    icon: CircleUser,
+    title: "PFP Generator",
+    description:
+      "Make a glossy Aero profile picture — your photo, initials, or an emoji on a dreamy scene with an iridescent bubble rim.",
+    preview: (
+      <div className="relative w-16 h-16">
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 74% 20%, rgba(255,255,255,0.85), transparent 45%), linear-gradient(to bottom, hsl(205,82%,56%), hsl(205,55%,80%))",
+            boxShadow: "0 3px 10px rgba(0,0,0,0.3)",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            padding: "3px",
+            background:
+              "conic-gradient(from 150deg, #ff9db0, #ffd27f, #b6f7aa, #8fd4ff, #c3a3ff, #ff9edd, #ff9db0)",
+            WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+          }}
+        />
+        <span className="absolute inset-0 flex justify-center items-center font-bold text-white text-lg" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>
+          AE
+        </span>
+        <div
+          className="absolute rounded-full"
+          style={{ top: "10%", left: "18%", width: "55%", height: "32%", background: "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.75), transparent 70%)" }}
         />
       </div>
     ),

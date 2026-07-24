@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/orb", label: "Glossy Orb" },
   { href: "/window-glass", label: "Window Glass" },
   { href: "/wallpaper", label: "Wallpaper" },
+  { href: "/pfp", label: "PFP" },
   { href: "/about", label: "About" },
 ];
 
