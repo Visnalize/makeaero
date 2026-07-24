@@ -4,6 +4,7 @@ import { AeroBackground } from "@/components/aero-background";
 import { CodeOutput } from "@/components/code-output";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,28 +19,55 @@ import { useState } from "react";
 
 const huePresets: Record<string, number> = {
   blue: 210,
-  "dark blue": 230,
+  "dark blue": 225,
   purple: 270,
-  teal: 180,
+  teal: 185,
   green: 140,
   graphite: 220,
 };
 
+// The document icon shipped inline in the copied HTML so the window has no
+// external asset dependency.
+const TITLE_ICON = `<svg class="aero-titlebar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="2" fill="#4a90d9"/><rect x="4" y="4" width="8" height="1.5" rx="0.75" fill="#fff"/><rect x="4" y="7" width="8" height="1.5" rx="0.75" fill="#fff"/><rect x="4" y="10" width="5" height="1.5" rx="0.75" fill="#fff"/></svg>`;
+
+function escapeHtml(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+const TITLE_H = 30;
+const MENU_H = 29;
+const STATUS_H = 24;
+
 export default function WindowGlassClient() {
   const [windowTitle, setWindowTitle] = useState("Untitled - Notepad");
-  const [windowWidth, setWindowWidth] = useState([500]);
-  const [windowHeight, setWindowHeight] = useState([350]);
+  const [windowWidth, setWindowWidth] = useState([520]);
+  const [windowHeight, setWindowHeight] = useState([360]);
   const [selectedHue, setSelectedHue] = useState("blue");
   const [customHue, setCustomHue] = useState([210]);
   const [glassOpacity, setGlassOpacity] = useState([0.6]);
-  const [borderRadius, setBorderRadius] = useState([6]);
+  const [borderRadius, setBorderRadius] = useState([8]);
   const [showMenuBar, setShowMenuBar] = useState(true);
+  const [showStatusBar, setShowStatusBar] = useState(false);
+  const [active, setActive] = useState(true);
+  const [content, setContent] = useState(
+    "This Aero window is pure CSS — no images, no libraries.\nCopy the CSS and HTML and drop it anywhere."
+  );
 
-  const getCurrentHue = () => {
-    return selectedHue === "custom"
-      ? customHue[0]
-      : huePresets[selectedHue];
-  };
+  const getCurrentHue = () =>
+    selectedHue === "custom" ? customHue[0] : huePresets[selectedHue];
+
+  const bodyMinHeight = Math.max(
+    60,
+    windowHeight[0] -
+      TITLE_H -
+      (showMenuBar ? MENU_H : 0) -
+      (showStatusBar ? STATUS_H : 0) -
+      12
+  );
 
   const generateCSS = () => {
     const hue = getCurrentHue();
@@ -47,252 +75,312 @@ export default function WindowGlassClient() {
     const radius = borderRadius[0];
     const width = windowWidth[0];
 
-    return `/* Windows 7 Aero Glass Window CSS */
-/* Based on 7.css — https://github.com/khang-nd/7.css */
+    return `/* ---------------------------------------------------------------
+   Aero Glass Window — self-contained, zero dependencies.
+   Just copy this CSS and the matching HTML; it works on any
+   background. Tweak the custom properties on .aero-window to taste.
+   --------------------------------------------------------------- */
 
 .aero-window {
-  font-family: "Segoe UI", "SegoeUI", "Noto Sans", sans-serif;
-  font-size: 9pt;
-  width: ${width}px;
-  border: 1px solid rgba(0, 0, 0, 0.7);
-  border-radius: ${radius}px;
-  box-shadow:
-    2px 2px 10px 1px rgba(0, 0, 0, 0.7),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.98);
+  --hue: ${hue};
+  --radius: ${radius}px;
+  --glass-opacity: ${opacity};
+  /* Alpha is baked into the tint so the colour stays vivid while the gloss
+     highlights (layered on top) render at full strength. */
+  --glass: hsl(var(--hue) 65% 52% / var(--glass-opacity));
+  --frame: 9px;
+
   position: relative;
-  z-index: 0;
+  isolation: isolate;
+  width: ${width}px;
+  border-radius: var(--radius);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, system-ui, sans-serif;
+  font-size: 12px;
+  color: #1b1b1b;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.5),
+    0 0 26px hsl(var(--hue) 90% 58% / 0.28),
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 0 30px rgba(255, 255, 255, 0.28);
 }
 
-/* Full-window colored glass layer */
+/* Colored glass sheet — vivid tint + specular gloss + diagonal sheen */
 .aero-window::before {
   content: "";
   position: absolute;
+  inset: 0;
   z-index: -1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: ${radius}px;
+  border-radius: var(--radius);
   background:
-    linear-gradient(transparent 20%, rgba(255, 255, 255, 0.7) 40%, transparent 41%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.2)),
-    hsl(${hue}, 55%, 45%);
-  background-color: hsl(${hue}, 55%, 45%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.99);
-  opacity: ${opacity};
+    /* diagonal reflection streak */
+    linear-gradient(104deg, transparent 26%, rgba(255, 255, 255, 0.32) 42%, rgba(255, 255, 255, 0.05) 50%, transparent 64%),
+    /* bright top specular highlight */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.2) 42%, rgba(255, 255, 255, 0) 54%),
+    /* soft vertical shade for depth */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.12)),
+    /* colored glass tint */
+    var(--glass);
 }
 
-/* Blur backdrop */
+/* Frost whatever sits behind the window — the effect that makes it glass */
 .aero-window::after {
   content: "";
   position: absolute;
-  z-index: -10;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: ${radius}px;
-  backdrop-filter: blur(4px);
+  inset: 0;
+  z-index: -2;
+  border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(18px) saturate(1.9);
+  backdrop-filter: blur(18px) saturate(1.9);
 }
 
-/* Title bar — authentic diagonal glass stripe texture */
-.aero-title-bar {
-  padding: 6px;
-  padding-top: 0;
+/* ---- Title bar ---- */
+.aero-window .aero-titlebar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: ${radius}px ${radius}px 0 0;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.99),
-    inset 1px 0 0 rgba(255, 255, 255, 0.99),
-    inset -1px 0 0 rgba(255, 255, 255, 0.99);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.33) 70px, transparent 100px),
-    linear-gradient(225deg, rgba(255, 255, 255, 0.33) 70px, transparent 100px),
-    linear-gradient(
-      54deg,
-      rgba(0,0,0,0.13) 0 4%, rgba(102,102,102,0.07) 6%, rgba(0,0,0,0.13) 8% 10%,
-      rgba(0,0,0,0.13) 15% 16%, rgba(170,170,170,0.07) 17% 18%, rgba(0,0,0,0.13) 23% 24%,
-      rgba(187,187,187,0.13) 25% 26%, rgba(0,0,0,0.13) 31% 33%,
-      rgba(0,0,0,0.13) 34% 34.5%, rgba(187,187,187,0.13) 36% 40%,
-      rgba(0,0,0,0.13) 41% 41.5%, rgba(187,187,187,0.13) 44% 45%,
-      rgba(187,187,187,0.13) 46% 47%, rgba(0,0,0,0.13) 48% 49%, rgba(0,0,0,0.13) 50% 50.5%,
-      rgba(0,0,0,0.13) 56% 56.5%, rgba(187,187,187,0.13) 57% 63%, rgba(0,0,0,0.13) 67% 69%,
-      rgba(187,187,187,0.13) 69.5% 70%, rgba(0,0,0,0.13) 73.5% 74%,
-      rgba(187,187,187,0.13) 74.5% 79%, rgba(0,0,0,0.13) 80% 84%,
-      rgba(170,170,170,0.13) 85% 86%, rgba(0,0,0,0.13) 87%, rgba(187,187,187,0.07) 90%
-    ) left center / 100vw 100vh no-repeat fixed;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 0 6px;
+  min-height: ${TITLE_H}px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  /* faint self-contained brushed sheen */
+  background: repeating-linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0.05) 0 1px,
+    transparent 1px 5px
+  );
 }
 
-/* Title icon */
-.aero-title-icon {
+.aero-window .aero-titlebar-icon {
   width: 16px;
   height: 16px;
-  margin-right: 4px;
-  padding-top: 6px;
-  flex-shrink: 0;
-  display: block;
+  margin-top: 7px;
+  flex: none;
 }
 
-/* Title text — black with white glow for glass legibility */
-.aero-title-bar-text {
-  color: #000000;
-  letter-spacing: 0;
-  line-height: 15px;
-  padding-top: 6px;
-  text-shadow:
-    0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff,
-    0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
+.aero-window .aero-titlebar-text {
   flex: 1;
+  min-width: 0;
+  margin-top: 7px;
+  line-height: 16px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  color: #0b0b0b;
+  /* white halo keeps the caption legible over any glass color */
+  text-shadow: 0 0 4px #fff, 0 0 4px #fff, 0 0 7px #fff, 0 0 10px #fff;
 }
 
-/* Window controls strip — capsule hanging from top */
-.aero-title-bar-controls {
+/* ---- Caption buttons (capsule hanging from the top edge) ---- */
+.aero-window .aero-caption {
   display: flex;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  flex: none;
+  border: 1px solid rgba(0, 0, 0, 0.35);
   border-top: 0;
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 4px 4px;
+  overflow: hidden;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.98),
-    1px 0 0 rgba(255, 255, 255, 0.98),
-    -1px 0 0 rgba(255, 255, 255, 0.98);
+    0 1px 0 rgba(255, 255, 255, 0.9),
+    1px 0 0 rgba(255, 255, 255, 0.7),
+    -1px 0 0 rgba(255, 255, 255, 0.7);
 }
 
-.aero-title-bar-controls button {
-  position: relative;
+.aero-window .aero-caption button {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 29px;
-  min-height: 21px;
+  height: 20px;
+  margin: 0;
   padding: 0;
   border: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0;
-  box-sizing: border-box;
+  border-right: 1px solid rgba(0, 0, 0, 0.28);
+  color: rgba(0, 0, 0, 0.68);
   cursor: pointer;
-  font-size: 13px;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.65);
-  text-shadow: 0 0 3px rgba(255, 255, 255, 0.9), 0 1px 0 rgba(255, 255, 255, 0.8);
   background: linear-gradient(
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.3) 45%,
-    rgba(0, 0, 0, 0.1) 50%,
-    rgba(0, 0, 0, 0.1) 75%,
-    rgba(255, 255, 255, 0.5)
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.28) 46%,
+    rgba(0, 0, 0, 0.08) 50%,
+    rgba(0, 0, 0, 0.08) 78%,
+    rgba(255, 255, 255, 0.4)
   );
-  transition: box-shadow 0.1s;
+  transition: box-shadow 0.12s ease, background 0.12s ease, color 0.12s ease;
 }
 
-.aero-title-bar-controls button:first-child {
-  border-bottom-left-radius: 5px;
-}
-
-.aero-title-bar-controls button:last-child {
+.aero-window .aero-caption button:last-child {
   border-right: 0;
-  border-bottom-right-radius: 5px;
-  min-width: 48px;
+  min-width: 46px;
 }
 
-/* Hover — cyan radial glow */
-.aero-title-bar-controls button:not(.close):hover {
-  background:
-    radial-gradient(circle at bottom, #2aceda, transparent 65%),
-    linear-gradient(#b6d9ee 50%, #1a6ca1 50%);
-  box-shadow: 0 0 7px 3px #5dc4f0, inset 0 0 0 1px rgba(255, 255, 255, 0.98);
-  color: white;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+/* Glyphs drawn in pure CSS — no icon font, no images */
+.aero-window .aero-caption .min::before {
+  content: "";
+  width: 10px;
+  height: 2px;
+  margin-top: 6px;
+  background: currentColor;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.aero-window .aero-caption .max::before {
+  content: "";
+  width: 11px;
+  height: 9px;
+  border: 1px solid currentColor;
+  border-top-width: 2px;
+}
+.aero-window .aero-caption .close::before {
+  content: "\\2715";
+  font-size: 11px;
+  line-height: 1;
 }
 
-.aero-title-bar-controls button:not(.close):active {
+/* Hover / active — cyan Aero glow for min & max */
+.aero-window .aero-caption button:not(.close):hover {
+  color: #fff;
   background:
-    radial-gradient(circle at bottom, #0bfdfa, transparent 65%),
-    linear-gradient(#86a7bc 50%, #092747 50%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.98);
+    radial-gradient(120% 90% at 50% 130%, #3fd0e6, transparent 60%),
+    linear-gradient(#c3e3f4 48%, #1f79b0 50%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px 2px rgba(93, 196, 240, 0.85);
+}
+.aero-window .aero-caption button:not(.close):active {
+  background:
+    radial-gradient(120% 90% at 50% 130%, #12e6e6, transparent 60%),
+    linear-gradient(#8fb3c9 48%, #0d3350 50%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
 }
 
-/* Close button */
-.aero-title-bar-controls button.close {
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+/* Close button — red */
+.aero-window .aero-caption .close {
+  color: #fff;
   background:
-    radial-gradient(circle at -60% 50%, rgba(0, 0, 0, 0.44) 5% 10%, transparent 50%),
-    radial-gradient(circle at 160% 50%, rgba(0, 0, 0, 0.44) 5% 10%, transparent 50%),
-    linear-gradient(rgba(224, 161, 151, 0.9), #cf796a 25% 50%, #d54f36 50%);
+    radial-gradient(circle at -30% 50%, rgba(0, 0, 0, 0.4) 6%, transparent 55%),
+    radial-gradient(circle at 130% 50%, rgba(0, 0, 0, 0.4) 6%, transparent 55%),
+    linear-gradient(#e6a99f, #d16b5b 48%, #cf4b34 50%, #d8654c);
+}
+.aero-window .aero-caption .close:hover {
+  background:
+    radial-gradient(120% 90% at 50% 130%, #ff9a86, transparent 60%),
+    linear-gradient(#ffc0b5 48%, #d40a0a 50%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px 2px rgba(255, 80, 48, 0.85);
+}
+.aero-window .aero-caption .close:active {
+  background:
+    radial-gradient(120% 90% at 50% 130%, #ff3a1a, transparent 60%),
+    linear-gradient(#c94a3a 48%, #8b0000 50%);
 }
 
-.aero-title-bar-controls button.close:hover {
-  background:
-    radial-gradient(circle at bottom, #ff8a7a, transparent 65%),
-    linear-gradient(#ffbdb3 50%, #d40000 50%);
-  box-shadow: 0 0 7px 3px #ff5030, inset 0 0 0 1px rgba(255, 255, 255, 0.98);
-  color: white;
-}
-
-.aero-title-bar-controls button.close:active {
-  background:
-    radial-gradient(circle at bottom, #ff3300, transparent 65%),
-    linear-gradient(#d45050 50%, #8b0000 50%);
-}${showMenuBar ? `
-
-/* Menu bar */
-.aero-window-menubar {
-  background: linear-gradient(#fff 20%, #f1f4fa 25%, #f1f4fa 43%, #d4dbee 48%, #e6eaf6);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+/* ---- Menu bar ---- */
+.aero-window .aero-menubar {
   display: flex;
   align-items: stretch;
-  font-size: 9pt;
-  color: #000;
-  font-family: "Segoe UI", "SegoeUI", "Noto Sans", sans-serif;
+  margin: 0 var(--frame);
+  background: linear-gradient(#ffffff 0%, #eef2f9 45%, #dbe3f1 55%, #e9eef8 100%);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-bottom: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
-
-.aero-window-menubar span {
-  display: inline-flex;
-  align-items: center;
+.aero-window .aero-menubar span {
   padding: 4px 10px;
   cursor: default;
+  color: #1b1b1b;
+}
+.aero-window .aero-menubar span:hover {
+  background: linear-gradient(#eaf4fd, #cfe8fb);
+  box-shadow: inset 0 0 0 1px #b5dcfb;
+  border-radius: 3px;
 }
 
-.aero-window-menubar span:hover {
-  background: #3399ff;
-  color: #fff;
-}` : ""}
-
-/* Window body — solid #f0f0f0 surface, inset 6px from glass border */
-.aero-window-body {
-  margin: 6px;
-  margin-top: 0;
-  border: 1px solid rgba(0, 0, 0, 0.7);
+/* ---- Content area ---- */
+.aero-window .aero-body {
+  margin: 0 var(--frame);
+  padding: 12px;
+  min-height: ${bodyMinHeight}px;
   background: #f0f0f0;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6);
-  padding: 6px;
-}`;  }
+  color: #1b1b1b;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  white-space: pre-wrap;
+  overflow: auto;
+}
+.aero-window .aero-body:last-child {
+  margin-bottom: var(--frame);
+  border-radius: 0 0 3px 3px;
+}
+
+/* ---- Status bar ---- */
+.aero-window .aero-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 var(--frame) var(--frame);
+  padding: 3px 8px;
+  min-height: ${STATUS_H}px;
+  font-size: 11px;
+  color: #1b1b1b;
+  background: linear-gradient(#f7f9fc, #e4e9f2);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+.aero-window .aero-statusbar .aero-status-grow {
+  flex: 1;
+}
+/* Resize gripper (bottom-right dots) */
+.aero-window .aero-statusbar .aero-gripper {
+  width: 12px;
+  height: 12px;
+  background:
+    radial-gradient(circle 1px at 2px 10px, rgba(0, 0, 0, 0.35) 99%, transparent),
+    radial-gradient(circle 1px at 6px 10px, rgba(0, 0, 0, 0.35) 99%, transparent),
+    radial-gradient(circle 1px at 10px 10px, rgba(0, 0, 0, 0.35) 99%, transparent),
+    radial-gradient(circle 1px at 6px 6px, rgba(0, 0, 0, 0.35) 99%, transparent),
+    radial-gradient(circle 1px at 10px 6px, rgba(0, 0, 0, 0.35) 99%, transparent),
+    radial-gradient(circle 1px at 10px 2px, rgba(0, 0, 0, 0.35) 99%, transparent);
+}
+
+/* ---- Inactive (unfocused) window ---- */
+.aero-window.inactive::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08) 44%, rgba(255, 255, 255, 0) 46%),
+    hsl(var(--hue) 14% 84%);
+  opacity: 0.82;
+}
+.aero-window.inactive .aero-titlebar-text {
+  color: #5a5a5a;
+  text-shadow: 0 0 4px #fff, 0 0 6px #fff;
+}`;
+  };
 
   const generateHTML = () => {
-    return `<div class="aero-window">
-  <div class="aero-title-bar">
-    <span class="aero-title-icon"></span>
-    <span class="aero-title-bar-text">${windowTitle}</span>
-    <div class="aero-title-bar-controls">
-      <button aria-label="Minimize">&#8212;</button>
-      <button aria-label="Maximize">&#9633;</button>
-      <button aria-label="Close" class="close">&#215;</button>
+    const cls = active ? "aero-window" : "aero-window inactive";
+    return `<div class="${cls}">
+  <div class="aero-titlebar">
+    ${TITLE_ICON}
+    <span class="aero-titlebar-text">${escapeHtml(windowTitle)}</span>
+    <div class="aero-caption">
+      <button class="min" type="button" aria-label="Minimize"></button>
+      <button class="max" type="button" aria-label="Maximize"></button>
+      <button class="close" type="button" aria-label="Close"></button>
     </div>
   </div>${showMenuBar ? `
-  <div class="aero-window-menubar">
+  <div class="aero-menubar">
     <span>File</span>
     <span>Edit</span>
     <span>Format</span>
     <span>View</span>
     <span>Help</span>
   </div>` : ""}
-  <div class="aero-window-body">
-    <!-- Your content here -->
-  </div>
-</div>`;  }
+  <div class="aero-body">${escapeHtml(content)}</div>${showStatusBar ? `
+  <div class="aero-statusbar">
+    <span>Ready</span>
+    <span class="aero-status-grow"></span>
+    <span>100%</span>
+    <span class="aero-gripper"></span>
+  </div>` : ""}
+</div>`;
+  };
 
   return (
     <AeroBackground variant="page" className="flex flex-col px-6 py-10 min-h-[calc(100vh-3.5rem)]">
@@ -302,8 +390,9 @@ export default function WindowGlassClient() {
             Window Glass Generator
           </h1>
           <p className="aero-subtitle mx-auto mb-2 max-w-xl">
-            Generate authentic Windows 7 Aero-style glass window frames with
-            customizable title bars, glass effects, and content areas.
+            Generate a self-contained Aero glass window — title bar, glossy
+            caption buttons, menu bar, content and status bar. No frameworks, no
+            images: just copy the CSS and HTML.
           </p>
         </div>
 
@@ -321,6 +410,17 @@ export default function WindowGlassClient() {
                   value={windowTitle}
                   onChange={(e) => setWindowTitle(e.target.value)}
                   placeholder="Enter window title"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="content">Content</Label>
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={3}
+                  placeholder="Window body content"
                 />
               </div>
 
@@ -421,17 +521,34 @@ export default function WindowGlassClient() {
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="menubar"
-                  checked={showMenuBar}
-                  onChange={(e) => setShowMenuBar(e.target.checked)}
-                  className="rounded"
-                />
-                <Label htmlFor="menubar" className="cursor-pointer">
-                  Show Menu Bar
-                </Label>
+              <div className="gap-x-6 gap-y-3 grid grid-cols-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showMenuBar}
+                    onChange={(e) => setShowMenuBar(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="text-sm">Menu Bar</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showStatusBar}
+                    onChange={(e) => setShowStatusBar(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="text-sm">Status Bar</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={(e) => setActive(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="text-sm">Active (focused)</span>
+                </label>
               </div>
             </CardContent>
           </Card>
@@ -447,25 +564,30 @@ export default function WindowGlassClient() {
                 className="relative flex justify-center items-center p-8 rounded-xl min-h-[400px] overflow-auto"
               >
                 <style>{generateCSS()}</style>
-                <div className="aero-window" style={{ width: windowWidth[0] }}>
-                  <div className="aero-title-bar">
-                    <span className="aero-title-icon">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                        <rect width="16" height="16" rx="2" fill="#4a90d9"/>
-                        <rect x="3" y="4" width="10" height="1.5" rx="0.5" fill="white"/>
-                        <rect x="3" y="7" width="10" height="1.5" rx="0.5" fill="white"/>
-                        <rect x="3" y="10" width="7" height="1.5" rx="0.5" fill="white"/>
-                      </svg>
-                    </span>
-                    <span className="aero-title-bar-text">{windowTitle}</span>
-                    <div className="aero-title-bar-controls">
-                      <button aria-label="Minimize">&#8212;</button>
-                      <button aria-label="Maximize">&#9633;</button>
-                      <button aria-label="Close" className="close">&#215;</button>
+                <div className={active ? "aero-window" : "aero-window inactive"}>
+                  <div className="aero-titlebar">
+                    <svg
+                      className="aero-titlebar-icon"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <rect x="1" y="1" width="14" height="14" rx="2" fill="#4a90d9" />
+                      <rect x="4" y="4" width="8" height="1.5" rx="0.75" fill="#fff" />
+                      <rect x="4" y="7" width="8" height="1.5" rx="0.75" fill="#fff" />
+                      <rect x="4" y="10" width="5" height="1.5" rx="0.75" fill="#fff" />
+                    </svg>
+                    <span className="aero-titlebar-text">{windowTitle}</span>
+                    <div className="aero-caption">
+                      <button className="min" type="button" aria-label="Minimize" />
+                      <button className="max" type="button" aria-label="Maximize" />
+                      <button className="close" type="button" aria-label="Close" />
                     </div>
                   </div>
                   {showMenuBar && (
-                    <div className="aero-window-menubar">
+                    <div className="aero-menubar">
                       <span>File</span>
                       <span>Edit</span>
                       <span>Format</span>
@@ -473,10 +595,15 @@ export default function WindowGlassClient() {
                       <span>Help</span>
                     </div>
                   )}
-                  <div
-                    className="aero-window-body"
-                    style={{ minHeight: windowHeight[0] - (showMenuBar ? 50 : 27) }}
-                  />
+                  <div className="aero-body">{content}</div>
+                  {showStatusBar && (
+                    <div className="aero-statusbar">
+                      <span>Ready</span>
+                      <span className="aero-status-grow" />
+                      <span>100%</span>
+                      <span className="aero-gripper" />
+                    </div>
+                  )}
                 </div>
               </AeroBackground>
             </CardContent>

@@ -27,12 +27,13 @@ Generate glossy orb and soap-bubble effects in two modes:
 
 ### Window Glass Generator
 
-Generate Windows 7 Aero-style glass window frames with:
+Generate a self-contained Windows 7 Aero-style glass window — our own implementation with **zero dependencies** (no framework, no icon fonts, no images). Copy the CSS and HTML and drop it on any background.
 
-- Configurable window title and dimensions
-- Glass color and opacity controls
-- Optional menu bar (File, Edit, Format, View, Help)
-- Authentic title bar with min/max/close controls
+- Configurable window title, dimensions, and body content
+- Glass color, opacity, and border-radius controls, with real `backdrop-filter` frosting
+- Glossy caption buttons (minimize/maximize/close) drawn in pure CSS with authentic Aero hover glows
+- Optional menu bar (File, Edit, Format, View, Help) and status bar with resize gripper
+- Active / inactive (focused) window states
 - Copy both CSS and HTML output
 
 ### Aero Wallpaper Generator
