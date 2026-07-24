@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Upload } from "lucide-react";
 
@@ -46,6 +47,7 @@ function hslToHex(h: number, s: number, l: number): string {
 
 export default function OrbClient() {
   const [mode, setMode] = useState("css");
+  const [orbStyle, setOrbStyle] = useState<"glossy" | "bubble">("glossy");
   const [orbSize, setOrbSize] = useState([200]);
   const [selectedHue, setSelectedHue] = useState("blue");
   const [customHue, setCustomHue] = useState([245]);
@@ -67,6 +69,78 @@ export default function OrbClient() {
     const sat = saturation[0];
     const gloss = glossIntensity[0];
     const size = orbSize[0];
+
+    if (orbStyle === "bubble") {
+      return `/* Frutiger Aero Soap Bubble CSS */
+.glossy-orb {
+  --hue: ${hue};
+  --sat: ${sat};
+  --gloss: ${gloss};
+
+  width: ${size}px;
+  height: ${size}px;
+  border-radius: 50%;
+  position: relative;
+
+  /* Thin-film glass fill — mostly transparent, faintly tinted */
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, ${(0.5 + gloss * 0.4).toFixed(2)}), transparent 22%),
+    radial-gradient(circle at 68% 74%, rgba(255, 255, 255, 0.12), transparent 35%),
+    radial-gradient(
+      circle at 50% 50%,
+      oklch(95% var(--sat) var(--hue) / 0.12),
+      oklch(85% var(--sat) var(--hue) / 0.04) 70%,
+      transparent 100%
+    );
+
+  /* Rim-lit glass edge, no heavy depth shadow like a solid sphere */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset -6px -6px 16px rgba(255, 255, 255, 0.18),
+    inset 6px 10px 22px rgba(0, 0, 0, 0.06),
+    0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Iridescent rainbow rim — the classic soap-bubble thin-film effect */
+.glossy-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg,
+    rgba(255, 150, 150, 0.55),
+    rgba(255, 220, 140, 0.55),
+    rgba(170, 255, 180, 0.55),
+    rgba(140, 220, 255, 0.55),
+    rgba(190, 150, 255, 0.55),
+    rgba(255, 150, 220, 0.55),
+    rgba(255, 150, 150, 0.55)
+  );
+  -webkit-mask-image: radial-gradient(circle, transparent 82%, black 87%, black 97%, transparent 100%);
+  mask-image: radial-gradient(circle, transparent 82%, black 87%, black 97%, transparent 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Specular highlight */
+.glossy-orb::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  left: 18%;
+  width: 45%;
+  height: 35%;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 255, 255, ${Math.min(gloss + 0.2, 1).toFixed(2)}),
+    transparent
+  );
+  border-radius: 50%;
+  transform: rotate(-20deg);
+  pointer-events: none;
+}`;
+    }
 
     return `/* Frutiger Aero Glossy Orb CSS */
 .glossy-orb {
@@ -140,6 +214,81 @@ export default function OrbClient() {
     const midColor = hslToHex(hslHue, Math.min(hslSat, 100), 55);
     const darkColor = hslToHex(hslHue, Math.min(hslSat, 100), 30);
 
+    if (orbStyle === "bubble") {
+      // Canvas is left transparent (no opaque fill) so the exported PNG has
+      // a real transparent background — authentic to soap-bubble renders.
+
+      // Soft ground shadow
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + r * 0.92, r * 0.55, r * 0.1, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fill();
+
+      // Faint tinted glass fill
+      const fillGrad = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r);
+      fillGrad.addColorStop(0, `${lightColor}22`);
+      fillGrad.addColorStop(0.7, `${midColor}11`);
+      fillGrad.addColorStop(1, "transparent");
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = fillGrad;
+      ctx.fill();
+
+      // User image, clipped small and faded so the glass reads as transparent
+      if (uploadedImage) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.globalAlpha = 0.85;
+
+        const imgAspect = uploadedImage.width / uploadedImage.height;
+        const fitR = r * 1.1;
+        let drawW: number, drawH: number;
+        if (imgAspect > 1) {
+          drawH = fitR;
+          drawW = fitR * imgAspect;
+        } else {
+          drawW = fitR;
+          drawH = fitR / imgAspect;
+        }
+        ctx.drawImage(uploadedImage, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+        ctx.restore();
+      }
+
+      // Iridescent rainbow rim — thin-film soap-bubble effect
+      const segments = 180;
+      const rimWidth = Math.max(2, r * 0.06);
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      for (let i = 0; i < segments; i++) {
+        const a0 = (i / segments) * Math.PI * 2;
+        const a1 = ((i + 1) / segments) * Math.PI * 2;
+        const rimHue = (i / segments) * 360;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - rimWidth / 2, a0, a1 + 0.02);
+        ctx.strokeStyle = `hsla(${rimHue}, 90%, 75%, 0.5)`;
+        ctx.lineWidth = rimWidth;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Big specular highlight
+      ctx.save();
+      ctx.translate(cx * 0.72, cy * 0.55);
+      ctx.rotate((-20 * Math.PI) / 180);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.26, r * 0.19, 0, 0, Math.PI * 2);
+      const bubbleSpecGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 0.26);
+      bubbleSpecGrad.addColorStop(0, `rgba(255,255,255,${Math.min(gloss + 0.25, 1)})`);
+      bubbleSpecGrad.addColorStop(1, "transparent");
+      ctx.fillStyle = bubbleSpecGrad;
+      ctx.fill();
+      ctx.restore();
+
+      return;
+    }
+
     // Shadow
     ctx.save();
     ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
@@ -212,7 +361,7 @@ export default function OrbClient() {
     ctx.fillStyle = specGrad;
     ctx.fill();
     ctx.restore();
-  }, [orbSize, selectedHue, customHue, saturation, glossIntensity, uploadedImage]);
+  }, [orbSize, orbStyle, selectedHue, customHue, saturation, glossIntensity, uploadedImage]);
 
   useEffect(() => {
     if (mode === "image") {
@@ -243,13 +392,27 @@ export default function OrbClient() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement("a");
-    link.download = "glossy-orb.png";
+    link.download = orbStyle === "bubble" ? "soap-bubble.png" : "glossy-orb.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
 
   const sharedControls = (
     <>
+      <div>
+        <Label htmlFor="orb-style">Style</Label>
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          value={orbStyle}
+          onValueChange={(v) => v && setOrbStyle(v as "glossy" | "bubble")}
+          className="justify-start"
+        >
+          <ToggleGroupItem value="glossy">Glossy Orb</ToggleGroupItem>
+          <ToggleGroupItem value="bubble">Soap Bubble</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       <div>
         <Label>Orb Size: {orbSize[0]}px</Label>
         <Slider
@@ -339,10 +502,10 @@ export default function OrbClient() {
     <AeroBackground variant="page" className="flex flex-col px-6 py-10 min-h-[calc(100vh-3.5rem)]">
       <div className="mx-auto w-full max-w-6xl">
         <div className="mb-8 text-center">
-          <h1 className="mb-3 font-bold text-black text-4xl">
+          <h1 className="aero-title mb-3 font-bold text-4xl">
             Glossy Orb Generator
           </h1>
-          <p className="mx-auto mb-2 max-w-xl text-slate-600">
+          <p className="aero-subtitle mx-auto mb-2 max-w-xl">
             Generate glossy Frutiger Aero-style orbs — as pure CSS or as a
             downloadable image with your own logo.
           </p>
@@ -358,7 +521,7 @@ export default function OrbClient() {
 
           <TabsContent value="css">
             <div className="gap-8 grid lg:grid-cols-2">
-              <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+              <Card className="aero-glass">
                 <CardHeader>
                   <CardTitle>Orb Customization</CardTitle>
                 </CardHeader>
@@ -367,7 +530,7 @@ export default function OrbClient() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+              <Card className="aero-glass">
                 <CardHeader>
                   <CardTitle>Live Preview</CardTitle>
                 </CardHeader>
@@ -401,7 +564,7 @@ export default function OrbClient() {
 
           <TabsContent value="image">
             <div className="gap-8 grid lg:grid-cols-2">
-              <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+              <Card className="aero-glass">
                 <CardHeader>
                   <CardTitle>Orb Customization</CardTitle>
                 </CardHeader>
@@ -414,11 +577,11 @@ export default function OrbClient() {
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={handleDrop}
                     >
-                      <Upload className="mx-auto mb-2 w-8 h-8 text-slate-400" />
+                      <Upload className="mx-auto mb-2 w-8 h-8 text-slate-500" />
                       {imageName ? (
-                        <p className="text-slate-600 text-sm">{imageName}</p>
+                        <p className="text-slate-700 text-sm">{imageName}</p>
                       ) : (
-                        <p className="text-slate-500 text-sm">
+                        <p className="text-slate-600 text-sm">
                           Click or drag & drop an image
                         </p>
                       )}
@@ -447,7 +610,7 @@ export default function OrbClient() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+              <Card className="aero-glass">
                 <CardHeader>
                   <CardTitle>Preview</CardTitle>
                 </CardHeader>
@@ -457,10 +620,7 @@ export default function OrbClient() {
                     className="relative flex flex-col justify-center items-center gap-6 p-8 rounded-xl min-h-[400px]"
                   >
                     <canvas ref={canvasRef} />
-                    <Button
-                      onClick={handleDownload}
-                      className="bg-brand hover:bg-brand-dark"
-                    >
+                    <Button onClick={handleDownload} variant="aero">
                       <Download className="mr-2 w-4 h-4" />
                       Download PNG
                     </Button>

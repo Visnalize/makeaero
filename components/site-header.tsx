@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/button", label: "Button" },
   { href: "/orb", label: "Glossy Orb" },
   { href: "/window-glass", label: "Window Glass" },
+  { href: "/wallpaper", label: "Wallpaper" },
   { href: "/about", label: "About" },
 ];
 
@@ -27,18 +28,28 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="top-0 z-50 sticky bg-white/70 backdrop-blur-md border-white/30 border-b">
+    <header className="top-0 z-50 sticky aero-header">
       <div className="flex justify-between items-center mx-auto px-6 max-w-6xl h-14">
         <Link
           href="/"
-          className="font-bold text-slate-800 hover:text-brand text-xl transition-colors"
+          className="flex items-center gap-2 font-bold text-slate-800 hover:text-brand-dark text-xl transition-colors"
         >
+          <span
+            aria-hidden
+            className="inline-block rounded-full w-5 h-5"
+            style={{
+              background:
+                "radial-gradient(circle at 35% 30%, #eafff9, #12c6a6 55%, #0a7d67 100%)",
+              boxShadow:
+                "inset 0 -2px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.3)",
+            }}
+          />
           Make Aero
         </Link>
 
         <div className="flex items-center gap-1">
           {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -46,8 +57,8 @@ export function SiteHeader() {
                 className={cn(
                   "px-3 py-1.5 rounded-full font-medium text-sm transition-colors",
                   pathname === link.href
-                    ? "bg-brand-light text-brand-dark"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+                    ? "aero-nav-active"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60",
                 )}
               >
                 {link.label}
@@ -75,7 +86,7 @@ export function SiteHeader() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
-            className="sm:hidden hover:bg-slate-100 p-2 rounded-full text-slate-600 hover:text-slate-900 transition-colors"
+            className="lg:hidden hover:bg-slate-100 p-2 rounded-full text-slate-600 hover:text-slate-900 transition-colors"
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -84,7 +95,7 @@ export function SiteHeader() {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <nav className="sm:hidden top-full right-0 left-0 absolute bg-white/90 backdrop-blur-md px-4 pt-1 pb-3 border-white/30 border-t">
+        <nav className="lg:hidden top-full right-0 left-0 absolute aero-header px-4 pt-1 pb-3">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -93,8 +104,8 @@ export function SiteHeader() {
               className={cn(
                 "block px-3 py-2 rounded-lg font-medium text-sm transition-colors",
                 pathname === link.href
-                  ? "bg-brand-light text-brand-dark"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+                  ? "aero-nav-active"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-white/60",
               )}
             >
               {link.label}

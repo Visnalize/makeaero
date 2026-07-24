@@ -298,10 +298,10 @@ export default function WindowGlassClient() {
     <AeroBackground variant="page" className="flex flex-col px-6 py-10 min-h-[calc(100vh-3.5rem)]">
       <div className="mx-auto w-full max-w-6xl">
         <div className="mb-8 text-center">
-          <h1 className="mb-3 font-bold text-black text-4xl">
+          <h1 className="aero-title mb-3 font-bold text-4xl">
             Window Glass Generator
           </h1>
-          <p className="mx-auto mb-2 max-w-xl text-slate-600">
+          <p className="aero-subtitle mx-auto mb-2 max-w-xl">
             Generate authentic Windows 7 Aero-style glass window frames with
             customizable title bars, glass effects, and content areas.
           </p>
@@ -309,7 +309,7 @@ export default function WindowGlassClient() {
 
         <div className="gap-8 grid lg:grid-cols-2">
           {/* Controls */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+          <Card className="aero-glass">
             <CardHeader>
               <CardTitle>Window Customization</CardTitle>
             </CardHeader>
@@ -437,7 +437,7 @@ export default function WindowGlassClient() {
           </Card>
 
           {/* Preview */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+          <Card className="aero-glass">
             <CardHeader>
               <CardTitle>Live Preview</CardTitle>
             </CardHeader>

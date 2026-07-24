@@ -48,7 +48,7 @@ export function websiteJsonLd() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Free online tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, and glass window frames.",
+      "Free online tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, glass window frames, and dreamy wallpapers.",
     potentialAction: {
       "@type": "SearchAction",
       target: {

@@ -30,22 +30,25 @@ export function CodeOutput({
   };
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+    <Card className="aero-glass">
       <CardHeader>
         <CardTitle>Generated {language.toUpperCase()} Code</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex gap-4 mb-4">
-          {copyButtons.map((btn, i) => (
-            <Button
-              key={btn.label}
-              variant={btn.variant ?? (i === 0 ? "default" : "outline")}
-              className="w-28"
-              onClick={() => handleCopy(btn.text, i)}
-            >
-              {copiedIndex === i ? "Copied!" : btn.label}
-            </Button>
-          ))}
+          {copyButtons.map((btn, i) => {
+            const isPrimary = (btn.variant ?? (i === 0 ? "default" : "outline")) !== "outline";
+            return (
+              <Button
+                key={btn.label}
+                variant={isPrimary ? "aero" : "aeroSoft"}
+                className="w-28"
+                onClick={() => handleCopy(btn.text, i)}
+              >
+                {copiedIndex === i ? "Copied!" : btn.label}
+              </Button>
+            );
+          })}
         </div>
         {codeHtml ? (
           <div dangerouslySetInnerHTML={{ __html: codeHtml }} />

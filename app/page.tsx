@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, defaultOpenGraph, defaultTwitter, websiteJsonLd } from "@/lib/seo";
 import { AeroBackground } from "@/components/aero-background";
 import Link from "next/link";
-import { MousePointerClick, Circle, AppWindow } from "lucide-react";
+import { MousePointerClick, Circle, AppWindow, Image as ImageIcon } from "lucide-react";
 
 const HOME_TITLE = `${SITE_NAME} - Frutiger Aero Style Generator`;
 const HOME_DESCRIPTION =
-  "Your go-to tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, and glass window frames, all customizable and filled with nostalgia.";
+  "Your go-to tools for creating authentic Frutiger Aero styles — glossy buttons, shiny orbs, glass window frames, and dreamy wallpapers, all customizable and filled with nostalgia.";
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
@@ -20,6 +20,8 @@ export const metadata: Metadata = {
     "aero glass effect",
     "glass morphism",
     "aero design tools",
+    "frutiger aero wallpaper generator",
+    "soap bubble CSS",
   ],
   openGraph: {
     ...defaultOpenGraph,
@@ -117,6 +119,42 @@ const features = [
       </div>
     ),
   },
+  {
+    href: "/wallpaper",
+    icon: ImageIcon,
+    title: "Wallpaper Generator",
+    description:
+      "Generate the iconic Frutiger Aero desktop wallpaper — glowing sky gradients, iridescent bubbles, and bokeh light.",
+    preview: (
+      <div
+        className="relative rounded-md w-32 h-16 overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(to bottom, hsl(205, 82%, 55%) 0%, hsl(205, 60%, 78%) 45%, hsl(205, 30%, 92%) 100%)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+        }}
+      >
+        <div
+          className="absolute rounded-full w-6 h-6"
+          style={{
+            top: "20%",
+            left: "20%",
+            background: "conic-gradient(from 200deg, #ff9696, #ffdc8c, #aaffb4, #8cdcff, #be96ff, #ff96dc, #ff9696)",
+            opacity: 0.6,
+            mixBlendMode: "screen",
+          }}
+        />
+        <div
+          className="absolute rounded-full w-3 h-3"
+          style={{ top: "55%", left: "60%", background: "rgba(255,255,255,0.5)" }}
+        />
+        <div
+          className="absolute rounded-full w-2 h-2"
+          style={{ top: "35%", left: "70%", background: "rgba(255,255,255,0.4)" }}
+        />
+      </div>
+    ),
+  },
 ];
 
 export default function HomePage() {
@@ -129,15 +167,15 @@ export default function HomePage() {
       <div className="mx-auto w-full max-w-4xl">
         {/* Hero */}
         <div className="mb-16 text-center">
-          <h1 className="mb-4 font-bold text-slate-800 text-5xl">
+          <h1 className="aero-title mb-4 font-bold text-5xl">
             Make Aero
           </h1>
-          <p className="mx-auto max-w-xl text-slate-600 text-lg">
+          <p className="aero-subtitle mx-auto max-w-xl text-lg">
             Your go-to tools for creating authentic Frutiger Aero styles -
             glossy buttons, shiny orbs, and glass window frames, all
             customizable and filled with nostalgia.
           </p>
-          <p className="mt-2 text-slate-500 text-sm">
+          <p className="mt-2 text-slate-700 text-sm">
             A project by{" "}
             <a href="https://visnalize.com" target="_blank" className="text-brand-dark hover:underline">
               Visnalize
@@ -153,9 +191,15 @@ export default function HomePage() {
               href={feature.href}
               className="group block"
             >
-              <div className="bg-white/80 hover:bg-white/95 hover:shadow-brand-light/50 hover:shadow-lg backdrop-blur-sm p-6 border border-white/40 rounded-2xl h-full transition-all hover:-translate-y-1 duration-300">
+              <div className="aero-glass p-6 h-full transition-all group-hover:-translate-y-1 duration-300 group-hover:shadow-[0_16px_40px_rgba(29,84,148,0.28)]">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-brand-light p-2 rounded-xl text-brand-dark">
+                  <div
+                    className="flex justify-center items-center rounded-xl w-9 h-9 text-white shrink-0"
+                    style={{
+                      background: "linear-gradient(to bottom, #16c6a6, #0a8f75)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 3px rgba(10,100,82,0.4)",
+                    }}
+                  >
                     <feature.icon className="w-5 h-5" />
                   </div>
                   <h2 className="font-semibold text-slate-800">{feature.title}</h2>
@@ -163,7 +207,7 @@ export default function HomePage() {
                 <div className="flex justify-center items-center py-6">
                   {feature.preview}
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">
+                <p className="text-slate-700 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </div>

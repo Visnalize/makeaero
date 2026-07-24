@@ -2,6 +2,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { AeroScene } from "@/components/aero-scene";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Your go-to tool for creating authentic Frutiger Aero styles with ease, fully customizable and filled with nostalgia.",
+    "Your go-to tools for creating authentic Frutiger Aero styles — buttons, orbs, glass windows, and wallpapers — fully customizable and filled with nostalgia.",
   openGraph: {
     siteName: SITE_NAME,
     type: "website",
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <AeroScene />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

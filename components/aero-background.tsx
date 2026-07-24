@@ -1,26 +1,16 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * Layout wrapper for a page or a preview stage.
+ * - "page" is transparent so the site-wide <AeroScene /> sky shows through.
+ * - "preview" paints its own little pocket of Aero sky so generated
+ *   artifacts (orbs, buttons, windows) look like they're floating in it.
+ */
 const backgrounds = {
-  page: `
-    repeating-linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.03),
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px,
-      transparent 20px
-    ),
-    linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%)
-  `,
-  preview: `
-    repeating-linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.1),
-      rgba(255, 255, 255, 0.1) 1px,
-      transparent 1px,
-      transparent 15px
-    ),
-    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)
-  `,
+  page: "transparent",
+  preview:
+    "radial-gradient(120% 70% at 78% 6%, rgba(255,255,255,0.9), rgba(255,255,255,0) 45%)," +
+    "linear-gradient(170deg, #bfe3f8 0%, #dcf0fc 45%, #f2fbff 100%)",
 };
 
 export function AeroBackground({
@@ -33,7 +23,10 @@ export function AeroBackground({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn(className)} style={{ background: backgrounds[variant] }}>
+    <div
+      className={cn(className, variant === "preview" && "aero-stage")}
+      style={variant === "preview" ? { background: backgrounds.preview } : undefined}
+    >
       {children}
     </div>
   );

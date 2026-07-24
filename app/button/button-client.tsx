@@ -30,6 +30,31 @@ const huePresets = {
   cyan: 200,
 };
 
+const shapePresets = {
+  pill: { label: "Pill", radius: "9999px" },
+  rounded: { label: "Rounded", radius: "14px" },
+  rect: { label: "Aero Rect", radius: "5px" },
+};
+
+const fontPresets = {
+  lucida: {
+    label: "Lucida Grande (Mac OS X)",
+    stack: `"Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif`,
+  },
+  segoe: {
+    label: "Segoe UI (Windows Aero)",
+    stack: `"Segoe UI", Tahoma, "Segoe UI Web", system-ui, sans-serif`,
+  },
+  myriad: {
+    label: "Myriad Pro (closest to Frutiger)",
+    stack: `"Myriad Pro", "Myriad", "Helvetica Neue", Helvetica, Arial, sans-serif`,
+  },
+  tahoma: {
+    label: "Tahoma (Windows XP era)",
+    stack: `Tahoma, Verdana, Geneva, sans-serif`,
+  },
+};
+
 export default function ButtonClient() {
   const initialHue = "green";
   const [buttonText, setButtonText] = useState("Accept");
@@ -38,6 +63,9 @@ export default function ButtonClient() {
   const [customHue, setCustomHue] = useState([140]);
   const [glowIntensity, setGlowIntensity] = useState([0.7]);
   const [saturation, setSaturation] = useState([0.2]);
+  const [shape, setShape] = useState<keyof typeof shapePresets>("pill");
+  const [shineSweep, setShineSweep] = useState(true);
+  const [font, setFont] = useState<keyof typeof fontPresets>("lucida");
 
   const getCurrentHue = () => {
     return selectedHue === "custom"
@@ -49,6 +77,8 @@ export default function ButtonClient() {
     const hue = getCurrentHue();
     const sat = saturation[0];
     const glow = glowIntensity[0];
+    const radius = shapePresets[shape].radius;
+    const fontStack = fontPresets[font].stack;
 
     return `/* Authentic Frutiger Aero Button CSS */
 .frutiger-aero-button {
@@ -74,14 +104,14 @@ export default function ButtonClient() {
     linear-gradient(to bottom, var(--bg-dark), var(--bg));
 
   border: 1px solid var(--bg);
-  border-radius: 9999px;
+  border-radius: ${radius};
 
   /* Shadows and Effects */
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
 
   /* Typography */
   color: var(--fg);
-  font-family: "Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif;
+  font-family: ${fontStack};
   font-weight: 700;
   text-shadow: 0 2px 0.5em rgba(0, 0, 0, 0.2);
 
@@ -94,7 +124,23 @@ export default function ButtonClient() {
   user-select: none;
   -webkit-user-select: none;
 }
-
+${shineSweep ? `
+/* Diagonal Glass Shine Sweep — the classic Web 2.0 glare streak */
+.frutiger-aero-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 70%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+` : ""}
 /* Top Highlight Effect */
 .frutiger-aero-button::after {
   content: "";
@@ -149,10 +195,10 @@ export default function ButtonClient() {
     <AeroBackground variant="page" className="flex flex-col px-6 py-10 min-h-[calc(100vh-3.5rem)]">
       <div className="mx-auto w-full max-w-6xl">
         <div className="mb-8 text-center">
-          <h1 className="mb-3 font-bold text-black text-4xl">
+          <h1 className="aero-title mb-3 font-bold text-4xl">
             Frutiger Aero Button Generator
           </h1>
-          <p className="mx-auto mb-2 max-w-xl text-slate-600">
+          <p className="aero-subtitle mx-auto mb-2 max-w-xl">
             Create authentic Frutiger Aero-style buttons with customizable
             sizes, colors, and effects using the OKLCH color system.
           </p>
@@ -160,7 +206,7 @@ export default function ButtonClient() {
 
         <div className="gap-8 grid lg:grid-cols-2">
           {/* Controls */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+          <Card className="aero-glass">
             <CardHeader>
               <CardTitle>Button Customization</CardTitle>
             </CardHeader>
@@ -187,6 +233,23 @@ export default function ButtonClient() {
                   <ToggleGroupItem value="small">Small</ToggleGroupItem>
                   <ToggleGroupItem value="medium">Medium</ToggleGroupItem>
                   <ToggleGroupItem value="large">Large</ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+
+              <div>
+                <Label htmlFor="shape">Shape</Label>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  value={shape}
+                  onValueChange={(v) => v && setShape(v as keyof typeof shapePresets)}
+                  className="justify-start"
+                >
+                  {Object.entries(shapePresets).map(([key, preset]) => (
+                    <ToggleGroupItem key={key} value={key}>
+                      {preset.label}
+                    </ToggleGroupItem>
+                  ))}
                 </ToggleGroup>
               </div>
 
@@ -267,11 +330,44 @@ export default function ButtonClient() {
                   className="mt-2"
                 />
               </div>
+
+              <div>
+                <Label htmlFor="font">Font</Label>
+                <Select value={font} onValueChange={(v) => setFont(v as keyof typeof fontPresets)}>
+                  <SelectTrigger id="font">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(fontPresets).map(([key, preset]) => (
+                      <SelectItem key={key} value={key}>
+                        {preset.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="mt-1 text-slate-600 text-xs">
+                  The real Frutiger typeface inspired this era&apos;s UI fonts —
+                  Myriad Pro is its closest widely-available relative.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="shine"
+                  checked={shineSweep}
+                  onChange={(e) => setShineSweep(e.target.checked)}
+                  className="rounded"
+                />
+                <Label htmlFor="shine" className="cursor-pointer">
+                  Diagonal Glass Shine Sweep
+                </Label>
+              </div>
             </CardContent>
           </Card>
 
           {/* Preview */}
-          <Card className="bg-white/90 backdrop-blur-sm border-white/30">
+          <Card className="aero-glass">
             <CardHeader>
               <CardTitle>Live Preview</CardTitle>
             </CardHeader>

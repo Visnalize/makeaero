@@ -32,11 +32,12 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto px-6 py-16 max-w-2xl">
-      <h1 className="mb-8 font-bold text-slate-900 text-4xl tracking-tight">
+    <div className="mx-auto px-6 py-16 max-w-2xl">
+      <h1 className="aero-title mb-8 font-bold text-4xl tracking-tight">
         About
       </h1>
 
+      <div className="aero-glass p-8">
       <section className="mb-10">
         <h2 className="mb-3 font-semibold text-slate-800 text-xl">
           Motivation
@@ -119,6 +120,7 @@ export default function AboutPage() {
           you&apos;ll feel right at home.
         </p>
       </section>
-    </main>
+      </div>
+    </div>
   );
 }
